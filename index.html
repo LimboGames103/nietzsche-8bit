@@ -1,168 +1,36 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nietzsche: Filosofia com o Martelo</title>
-<style>
-*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:#09070d;color:#f3ead8;font-family:monospace}
-body{display:flex;justify-content:center;align-items:center;padding:18px}
-#wrap{width:min(1100px,100%);text-align:center}
-h1{font-size:clamp(18px,3vw,30px);margin:0 0 10px;color:#d8b66a;text-shadow:3px 3px #351a2d}
-#game{width:100%;aspect-ratio:16/9;image-rendering:pixelated;image-rendering:crisp-edges;background:#100b18;border:6px solid #5d4055;box-shadow:0 0 0 4px #17101d,0 14px 45px #000}
-#hint{margin-top:9px;font-size:13px;color:#b9a99c}
-button{font:inherit;color:#f7ebd4;background:#342337;border:3px solid #8b6377;padding:9px 13px;cursor:pointer}
-button:hover{background:#503149}
-#mute{margin-top:8px}
-</style>
-</head>
-<body>
-<div id="wrap">
-<h1>NIETZSCHE — A FILOSOFIA COM O MARTELO</h1>
-<canvas id="game" width="960" height="540" aria-label="Jogo 8-bit"></canvas>
-<div id="hint">Setas/A-D: mover · Espaço/Enter: avançar · 1–4: responder · clique/touch também funciona</div>
-<button id="mute">🔊 Som: ligado</button>
-</div>
-<script>
-const c=document.getElementById('game'),ctx=c.getContext('2d'); ctx.imageSmoothingEnabled=false;
-const W=960,H=540;
-let state='intro', q=0, lives=3, x=110, scroll=0, selected=-1, hang='', hangLetters=[], wrong=0;
-let muted=false, keys={}, particles=[], last=performance.now(), audio=null, beat=0;
-const questions=[
- {type:'mc',title:'O FILÓSOFO E O MARTELO',text:'O que significa, em Nietzsche, “filosofar com o martelo”?',
-  opts:['Destruir tudo pela força física.','Examinar e questionar criticamente valores e ídolos tidos como absolutos.','Provar que a ciência é sempre falsa.','Defender uma moral universal e imutável.'],ans:1},
- {type:'mc',title:'A MORTE DE DEUS',text:'No sentido filosófico da expressão, o que anuncia a “morte de Deus”?',
-  opts:['Apenas uma previsão sobre religião.','A descoberta científica de um novo planeta.','A crise dos fundamentos absolutos que davam sentido e valor à cultura ocidental.','Que Nietzsche propunha simplesmente trocar Deus por outro deus.'],ans:2},
- {type:'hang',title:'CONTRA O CIENTIFICISMO',text:'Complete a palavra ligada à crítica de Nietzsche à ideia de que a ciência poderia explicar e esgotar toda a realidade.',
-  word:'CIENTIFICISMO',hint:'12 letras · começa com C',ans:'CIENTIFICISMO'},
- {type:'mc',title:'PERSPECTIVISMO',text:'O perspectivismo de Nietzsche implica que…',
-  opts:['Existe uma visão neutra, definitiva e sem perspectiva.','Toda opinião vale exatamente o mesmo, sem qualquer critério.','O conhecimento é situado em perspectivas; interpretar não é acessar um ponto de vista absolutamente neutro.','A verdade deixa de ter qualquer relação com interpretação.'],ans:2}
-];
-
-function tone(f,d=.08,type='square',vol=.035){
- if(muted)return;
- try{ if(!audio) audio=new (window.AudioContext||window.webkitAudioContext)();
- let o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=f;g.gain.value=vol;o.connect(g);g.connect(audio.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d);o.stop(audio.currentTime+d)}
- catch(e){}
-}
-function music(){
- if(muted)return;
- beat++;
- if(beat%8===0){tone(110,.18,'triangle',.018);setTimeout(()=>tone(82,.16,'triangle',.014),90)}
-}
-function rect(x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(Math.round(x),Math.round(y),w,h)}
-function text(t,x,y,size=18,col='#f3ead8',align='left'){ctx.font=`bold ${size}px monospace`;ctx.fillStyle=col;ctx.textAlign=align;ctx.fillText(t,x,y)}
-function pixelText(t,x,y,size=18,col='#f3ead8',align='left'){text(t,x,y,size,col,align)}
-
-function bg(){
- let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080613');g.addColorStop(.55,'#1b1220');g.addColorStop(1,'#08070d');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- // moon
- rect(720,55,72,72,'#e0d1a8');rect(728,47,56,88,'#e0d1a8');rect(706,70,18,35,'#e0d1a8');rect(783,61,18,47,'#e0d1a8');
- // mountains
- for(let i=0;i<8;i++){let bx=i*150-(scroll*.15%150);ctx.fillStyle='#21162a';ctx.beginPath();ctx.moveTo(bx,310);ctx.lineTo(bx+75,180+(i%2)*30);ctx.lineTo(bx+150,310);ctx.fill()}
- // castle silhouette
- rect(0,300,W,160,'#120d18');
- for(let i=0;i<10;i++){let bx=i*105-(scroll*.35%105);rect(bx,255-(i%3)*15,75,210,'#17101c');rect(bx+7,240-(i%3)*15,61,15,'#251624');}
- // towers
- for(let bx of [35,220,410,600,790]){rect(bx,185,82,275,'#160e1a');for(let k=0;k<4;k++)rect(bx+12+k*17,166,10,19,'#160e1a');}
- // windows
- for(let i=0;i<18;i++){let wx=(i*71-scroll*.5)%960;if(wx<0)wx+=960;rect(wx,315+(i%4)*28,10,17,'#d59d4f');}
- // ground
- rect(0,460,W,80,'#09070c'); for(let i=0;i<35;i++){let gx=(i*37-scroll)%960;if(gx<0)gx+=960;rect(gx,478+(i%2)*12,18,4,'#4a3144')}
-}
-
-function hero(){
- let hx=x-scroll*.5, hy=410;
- // cape/body
- rect(hx-12,hy-55,28,43,'#321d38');rect(hx-17,hy-18,38,17,'#281827');
- // head/hair
- rect(hx-5,hy-79,23,24,'#c58b69');rect(hx-10,hy-83,31,9,'#4b2a28');
- // big mustache
- rect(hx-13,hy-66,15,8,'#171014');rect(hx+10,hy-66,15,8,'#171014');rect(hx-3,hy-63,13,5,'#171014');
- // eyes
- rect(hx+1,hy-74,4,4,'#171014');rect(hx+13,hy-74,4,4,'#171014');
- // legs
- rect(hx-10,hy-2,11,18,'#181018');rect(hx+10,hy-2,11,18,'#181018');
- rect(hx-15,hy+14,18,6,'#0b090d');rect(hx+7,hy+14,18,6,'#0b090d');
-}
-function hud(){
- rect(18,16,270,48,'#100b14');rect(22,20,262,40,'#241727');
- text('VIDAS',34,45,18,'#d8b66a');for(let i=0;i<3;i++){text(i<lives?'♥':'♡',105+i*30,46,23,i<lives?'#d85b64':'#624553')}
- text(`ETAPA ${Math.min(q+1,4)}/4`,790,44,17,'#d8b66a');
-}
-function panel(title,body){
- rect(62,78,836,350,'#0a0810');rect(70,86,820,334,'#251827');rect(82,98,796,310,'#100c15');
- text(title,105,135,22,'#d8b66a');
- let words=body.split(' '),line='',yy=170;
- for(const w of words){let test=line?line+' '+w:w;if(ctx.measureText(test).width>700){text(line,105,yy,17);yy+=26;line=w}else line=test} text(line,105,yy,17);
-}
-function drawMC(){
- panel(questions[q].title,questions[q].text);
- const opts=questions[q].opts;
- opts.forEach((o,i)=>{let yy=235+i*39;let hov=selected===i;rect(102,yy-24,744,31,hov?'#503149':'#211623');text(`${i+1}) ${o}`,118,yy,15,hov?'#ffe6a8':'#e7dbcc')});
- text('Escolha 1–4 ou clique numa alternativa.',105,408,13,'#9f8c9a');
-}
-function drawHang(){
- panel(questions[q].title,questions[q].text);
- let display=hang.split('').map((ch,i)=>ch==='_'?'_':ch).join(' ');
- text(display,480,270,27,'#f0c86b','center');
- text(`Erros: ${wrong}/3`,480,306,15,wrong?'#d86a72':'#9f8c9a','center');
- text('Digite as letras no teclado. ENTER confirma quando completar.',480,343,13,'#c0b1bb','center');
- text('Palavra: '+hangLetters.join(' '),480,383,13,'#8e7b88','center');
-}
-function dialog(msg,sub=''){
- rect(88,342,784,122,'#08070c');rect(94,348,772,110,'#392338');text(msg,480,386,18,'#f3ead8','center');text(sub,480,420,13,'#c8b7bd','center');
-}
-function draw(){
- bg(); hero(); hud();
- if(state==='intro'){
-   panel('UM PASSEIO PELO PENSAMENTO', 'Você é Friedrich Nietzsche. Atravesse o castelo do século XIX, responda quatro desafios filosóficos e alcance a saída.');
-   dialog('“Torna-te quem tu és.”','Pressione ENTER ou ESPAÇO para começar.');
- } else if(state==='play'){
-   if(q<questions.length){questions[q].type==='mc'?drawMC():drawHang();}
- } else if(state==='win'){
-   panel('A SAÍDA', 'Você atravessou o castelo e enfrentou quatro questões. Agora o percurso retorna obrigatoriamente ao início.');
-   dialog('FIM DO PERCURSO','ENTER/ESPAÇO para voltar ao começo.');
- } else if(state==='lose'){
-   panel('UMA VIDA NÃO É ETERNA', 'As respostas não foram suficientes. O castelo permanece diante de você.');
-   dialog('GAME OVER','ENTER/ESPAÇO para recomeçar com 3 vidas.');
- }
- // atmospheric particles
- particles.forEach(p=>{rect(p.x,p.y,2,2,'#a47d70');p.y-=p.v;if(p.y<80)p.y=450});
- requestAnimationFrame(draw);
-}
-function answer(i){
- if(state!=='play'||questions[q].type!=='mc')return;
- selected=i; tone(i===questions[q].ans?660:160,.12,i===questions[q].ans?'square':'sawtooth',.04);
- if(i!==questions[q].ans){lives--; if(lives<=0){state='lose';return}}
- setTimeout(()=>{selected=-1;q++; if(q>=4)state='win'},450);
-}
-function reset(){q=0;lives=3;x=110;scroll=0;state='intro';selected=-1;wrong=0;hang='';hangLetters=[]}
-function start(){if(state==='intro'){state='play';q=0;lives=3;hang='';wrong=0;tone(440,.1);}}
-window.addEventListener('keydown',e=>{
- keys[e.key.toLowerCase()]=true;
- if(['ArrowLeft','ArrowRight',' ','Enter'].includes(e.key))e.preventDefault();
- if(e.key==='Enter'||e.key===' '){if(state==='intro')start();else if(state==='win'||state==='lose')reset();else if(state==='play'&&questions[q].type==='hang'&&hang.length===questions[q].ans.length)checkHang();}
- if(state==='play'&&questions[q].type==='mc'&&['1','2','3','4'].includes(e.key))answer(+e.key-1);
- if(state==='play'&&questions[q].type==='hang'&&/^[a-zA-Z]$/.test(e.key))letter(e.key.toUpperCase());
-});
-window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-c.addEventListener('click',e=>{
- const r=c.getBoundingClientRect(),mx=(e.clientX-r.left)*W/r.width,my=(e.clientY-r.top)*H/r.height;
- if(state==='intro')start(); else if(state==='win'||state==='lose')reset();
- else if(state==='play'&&questions[q].type==='mc'&&mx>100&&mx<850&&my>205&&my<410){let i=Math.floor((my-211)/39);if(i>=0&&i<4)answer(i)}
-});
-function letter(ch){
- if(!hang.includes(ch)&&hang.length<questions[q].ans.length){hang+=ch;hangLetters.push(ch);tone(300,.04)}
-}
-function checkHang(){
- if(hang===questions[q].ans){tone(800,.18);setTimeout(()=>{q++;hang='';hangLetters=[];wrong=0;if(q>=4)state='win'},400)}
- else {wrong++;tone(130,.15,'sawtooth');hang='';hangLetters=[];if(wrong>=3){lives--;wrong=0;if(lives<=0)state='lose'}}
-}
-document.getElementById('mute').onclick=()=>{muted=!muted;document.getElementById('mute').textContent=muted?'🔇 Som: desligado':'🔊 Som: ligado';if(!muted)tone(440,.08)};
-for(let i=0;i<45;i++)particles.push({x:Math.random()*W,y:80+Math.random()*380,v:.15+Math.random()*.4});
-setInterval(()=>{if(state==='play')music()},240);
-function move(){if(state==='play'){if(keys['arrowright']||keys['d'])x=Math.min(900,x+2.5);if(keys['arrowleft']||keys['a'])x=Math.max(60,x-2.5);scroll=Math.max(0,x-180)}requestAnimationFrame(move)} move(); draw();
-</script>
-</body>
-</html>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nietzsche 8-bit</title><style>html,body{margin:0;background:#08070c;color:#eee3d2;font-family:monospace}body{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:16px;box-sizing:border-box}#wrap{width:min(1120px,100%);text-align:center}h1{margin:0 0 8px;color:#e0ba65;text-shadow:3px 3px #321827;font-size:clamp(18px,3vw,28px)}canvas{width:100%;display:block;border:6px solid #65495a;box-shadow:0 0 0 3px #17101a,0 18px 50px #000;image-rendering:pixelated}#help{font-size:12px;color:#aa9a9e;margin-top:8px}button{font:inherit;background:#302034;color:#f4e6cf;border:2px solid #8c6879;padding:7px 12px;margin-top:8px}</style></head><body><div id="wrap"><h1>NIETZSCHE — A FILOSOFIA COM O MARTELO</h1><canvas id="game" width="960" height="540"></canvas><div id="help">← → / A D: caminhar · ENTER/ESPAÇO: interagir · 1–4: responder · letras na forca · M: som</div><button id="sound">🔊 Som ligado</button></div><script>
+const c=document.getElementById('game'),ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;const W=960,H=540;
+let state='title',stage=0,lives=3,px=120,cam=0,selected=-1,toast='',toastTime=0,hangErrors=0,guessed=new Set();
+const qs=[
+{title:'FILOSOFAR COM O MARTELO',q:'O que significa, em Nietzsche, “filosofar com o martelo”?',o:['Destruir tudo pela força física.','Examinar e questionar criticamente valores e ídolos tidos como absolutos.','Provar que a ciência é sempre falsa.','Defender uma moral universal e imutável.'],a:1},
+{title:'A MORTE DE DEUS',q:'No sentido filosófico da expressão, o que anuncia a “morte de Deus”?',o:['Apenas uma previsão sobre religião.','A descoberta científica de um novo planeta.','A crise dos fundamentos absolutos que davam sentido e valor à cultura ocidental.','Que Nietzsche propunha simplesmente trocar Deus por outro deus.'],a:2},
+{title:'CONTRA O CIENTIFICISMO',hang:true},
+{title:'PERSPECTIVISMO',q:'O perspectivismo de Nietzsche implica que…',o:['Existe uma visão neutra, definitiva e sem perspectiva.','Toda opinião vale exatamente o mesmo, sem qualquer critério.','O conhecimento é situado em perspectivas; interpretar não é acessar um ponto de vista absolutamente neutro.','A verdade deixa de ter qualquer relação com interpretação.'],a:2}];
+const word='CIENTIFICISMO';let mask=['C','I','_','N','T','I','F','I','C','I','S','M','O'];
+let audio=null,music=true,musicTimer=null,musicStep=0;
+function audioInit(){if(!music)return;if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();if(!musicTimer)musicTimer=setInterval(song,240)}
+function beep(f,d=.1,type='square',v=.03){if(!music)return;audioInit();if(!audio)return;let o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime;o.type=type;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(audio.destination);o.start(t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.stop(t+d)}
+function song(){if(!['title','walk','win','lose'].includes(state))return;let n=[110,0,147,0,165,0,147,0][musicStep++%8];if(n)beep(n,.15,'triangle',.015)}
+document.getElementById('sound').onclick=()=>{music=!music;document.getElementById('sound').textContent=music?'🔊 Som ligado':'🔇 Som desligado';if(music)audioInit()};
+function R(x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(x|0,y|0,w,h)}function T(s,x,y,z=17,col='#eee3d2',a='left'){ctx.font=`bold ${z}px monospace`;ctx.fillStyle=col;ctx.textAlign=a;ctx.fillText(s,x,y)}
+function wrap(s,x,y,max,z=17,lh=25,col='#eee3d2'){ctx.font=`bold ${z}px monospace`;let line='',yy=y;for(let w of s.split(' ')){let t=line?line+' '+w:w;if(ctx.measureText(t).width>max){T(line,x,yy,z,col);yy+=lh;line=w}else line=t}if(line)T(line,x,yy,z,col);return yy}
+function bg(){let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080711');g.addColorStop(.6,'#1a1120');g.addColorStop(1,'#08070b');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);R(735,52,70,70,'#d8c99f');R(715,70,20,35,'#d8c99f');R(805,70,14,30,'#d8c99f');for(let i=-1;i<8;i++){let x=i*180-(cam*.18%180);ctx.fillStyle='#20152a';ctx.beginPath();ctx.moveTo(x,350);ctx.lineTo(x+90,185+(i%2)*25);ctx.lineTo(x+180,350);ctx.fill()}R(0,330,W,130,'#110c17');for(let i=-1;i<12;i++){let x=i*105-(cam*.35%105);R(x,245,78,215,'#17101c');R(x+8,225,62,20,'#241726')}for(let x of [80,290,500,710,920]){R(x,175,76,285,'#140d19');for(let k=0;k<4;k++)R(x+10+k*17,154,10,22,'#140d19')}for(let i=0;i<20;i++){let x=(i*61-cam*.45)%1000;if(x<0)x+=1000;R(x,310+(i%4)*29,9,16,'#c99345')}R(0,460,W,80,'#09070c');for(let i=0;i<40;i++){let x=(i*33-cam*.8)%W;if(x<0)x+=W;R(x,485+(i%2)*13,16,4,'#4a3144')}}
+function hero(){let sx=px-cam,sy=415,walk=(Date.now()/130|0)%2;R(sx-21,432,42,5,'#050409');R(sx-15,sy-55,30,46,'#3c213e');R(sx-20,sy-17,40,14,'#251625');R(sx-7,sy-82,25,26,'#c58a69');R(sx-12,sy-87,35,10,'#4a2828');R(sx-15,sy-69,17,8,'#120d12');R(sx+10,sy-69,17,8,'#120d12');R(sx-4,sy-65,14,6,'#120d12');R(sx+1,sy-76,4,4,'#171014');R(sx+13,sy-76,4,4,'#171014');R(sx-25,sy-45,10,29,'#c58a69');R(sx+18,sy-45,10,29,'#c58a69');if(walk===0){R(sx-11,sy-5,11,22,'#181018');R(sx+10,sy-1,11,18,'#181018')}else{R(sx-11,sy-1,11,18,'#181018');R(sx+10,sy-5,11,22,'#181018')}R(sx-17,sy+14,18,7,'#08070b');R(sx+7,sy+14,18,7,'#08070b')}
+function hud(){R(18,15,925,48,'#0c0910');R(23,20,915,38,'#211522');T('NIETZSCHE',38,45,17,'#d8b66a');T('VIDAS',205,45,15,'#c6b4a4');for(let i=0;i<3;i++)T(i<lives?'♥':'♡',255+i*27,47,21,i<lives?'#dc626a':'#5e4652');T(`DESAFIO ${Math.min(stage+1,4)}/4`,790,45,15,'#c6b4a4','right')}
+function gate(){let sx=1820-cam;R(sx-38,300,76,160,'#241624');R(sx-24,325,48,135,'#0a0810');T('?',sx,377,30,'#d8b66a','center')}
+function world(){bg();gate();hero();hud();if(px>1710){R(585,392,330,54,'#0b0810');R(591,398,318,42,'#382238');T('ENTER / ESPAÇO — enfrentar o desafio',750,425,14,'#f0d9a6','center')}if(toastTime>0){R(270,90,420,52,'#100b14');T(toast,480,123,18,'#f0c86b','center');toastTime--}}
+function panel(){R(48,78,864,375,'#08070c');R(56,86,848,359,'#241727');R(68,98,824,335,'#0f0b14')}
+function question(){panel();let q=qs[stage];T(q.title,90,137,23,'#dfb963');wrap(q.q,90,172,760,17,25);q.o.forEach((o,i)=>{let y=235+i*43;R(92,y-24,776,34,selected===i?'#56344e':'#211623');T(`${i+1}) ${o}`,108,y,15,selected===i?'#ffe7aa':'#e7dbcc')});T('Escolha uma alternativa com 1–4.',480,424,13,'#9f8c9a','center');if(toastTime>0)T(toast,480,395,16,toast.startsWith('COR')?'#8fe0a2':'#e16c76','center')}
+function hang(){panel();T('CONTRA O CIENTIFICISMO',480,130,23,'#dfb963','center');wrap('Complete a palavra ligada à crítica de Nietzsche à ideia de que a ciência possa explicar e esgotar toda a realidade.',480,165,720,16,24);T('PISTA: crença de que a ciência é a explicação definitiva de tudo.',480,232,13,'#c4b3b8','center');T('A palavra começa com C e tem 13 letras.',480,255,13,'#c4b3b8','center');T(mask.join(' '),480,313,25,'#f0c86b','center');T(`Erros: ${hangErrors}/3`,480,352,13,hangErrors?'#dc7079':'#9f8c9a','center');T(`Letras tentadas: ${[...guessed].join(', ')||'nenhuma'}`,480,375,12,'#a99aa1','center');T('Digite letras. Quando completar, pressione ENTER.',480,414,12,'#b9a9b1','center')}
+function overlay(title,body,sub){bg();hero();R(80,80,800,365,'#07060b');R(88,88,784,349,'#2a1b2b');R(102,102,756,321,'#100c15');T(title,480,165,30,'#e0ba65','center');wrap(body,145,220,670,18,28);T(sub,480,390,14,'#c4b3b8','center')}
+function draw(){if(state==='title')overlay('NIETZSCHE 8-BIT','Atravesse o castelo, encontre os quatro desafios filosóficos e chegue à saída. Você começa com 3 vidas.','ENTER, ESPAÇO ou clique para começar');else if(state==='walk')world();else if(state==='question'){bg();question()}else if(state==='hang'){bg();hang()}else if(state==='win')overlay('VOCÊ CHEGOU AO FIM','Nietzsche atravessou o castelo e respondeu aos quatro desafios.','ENTER ou ESPAÇO: voltar obrigatoriamente ao começo');else if(state==='lose')overlay('GAME OVER','As três vidas foram perdidas. O percurso recomeçará desde o início.','ENTER ou ESPAÇO: recomeçar');requestAnimationFrame(draw)}
+function next(){stage++;selected=-1;toast='';toastTime=0;hangErrors=0;guessed.clear();mask=['C','I','_','N','T','I','F','I','C','I','S','M','O'];if(stage>=4)state='win';else{state='walk';px=120;cam=0}}
+function lose(){lives--;beep(120,.2,'sawtooth',.05);if(lives<=0)state='lose'}
+function answer(i){selected=i;if(i===qs[stage].a){toast='CORRETO!';toastTime=35;beep(660,.1);beep(880,.13);setTimeout(next,650)}else{toast='INCORRETO — você perdeu uma vida.';toastTime=55;lose();if(state!=='lose')setTimeout(()=>{selected=-1;toast='';toastTime=0},700)}}
+function start(){audioInit();state='walk';stage=0;lives=3;px=120;cam=0;beep(440,.1);beep(660,.12)}
+function reset(){state='title';stage=0;lives=3;px=120;cam=0;selected=-1;hangErrors=0;guessed.clear();mask=['C','I','_','N','T','I','F','I','C','I','S','M','O']}
+function hangKey(k){let L=k.toUpperCase();if(guessed.has(L))return;guessed.add(L);if(word.includes(L)){for(let i=0;i<word.length;i++)if(word[i]===L)mask[i]=L;beep(520,.07);if(!mask.includes('_'))setTimeout(()=>{toast='CORRETO!';toastTime=30;beep(660,.1);setTimeout(next,500)},200)}else{hangErrors++;beep(140,.14,'sawtooth',.04);if(hangErrors>=3){lose();hangErrors=0;guessed.clear();mask=['C','I','_','N','T','I','F','I','C','I','S','M','O']}}}
+window.addEventListener('keydown',e=>{audioInit();if(e.key.toLowerCase()==='m'){document.getElementById('sound').click();return}if(state==='title'&&(e.key==='Enter'||e.key===' ')){start();return}if((state==='win'||state==='lose')&&(e.key==='Enter'||e.key===' ')){reset();return}if(state==='walk'){if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')px=Math.min(1820,px+7);if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')px=Math.max(80,px-7);if((e.key==='Enter'||e.key===' ')&&px>1710){state=stage===2?'hang':'question';beep(520,.08)}return}if(state==='question'&&['1','2','3','4'].includes(e.key))answer(+e.key-1);else if(state==='hang'){if(e.key==='Enter'){if(!mask.includes('_')&&mask.join('')===word){next()}return}if(/^[a-zA-Z]$/.test(e.key))hangKey(e.key)}});
+c.addEventListener('pointerdown',()=>{audioInit();if(state==='title')start()});
+function moveCam(){if(state==='walk'){if(px>cam+620)cam=Math.min(1090,cam+8);if(px<cam+280)cam=Math.max(0,cam-8)}requestAnimationFrame(moveCam)}moveCam();draw();
+</script></body></html>
