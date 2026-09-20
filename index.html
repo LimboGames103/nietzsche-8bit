@@ -2,62 +2,97 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Nietzsche 8-Bit — O Caminho do Pensamento</title>
 <style>
-:root{--bg:#050912;--panel:#0c1728;--line:#6e84a5;--text:#f3ebdc;--muted:#b6c4d7;--gold:#efc879;--red:#ee7070;--green:#83d89a}
+:root{
+  --ink:#07101b; --panel:#0b1524; --panel2:#101d30; --line:#6c829f;
+  --text:#f2e8d8; --muted:#adbbcd; --gold:#e9c272; --red:#eb7272; --green:#82d599;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;overflow:hidden;background:#02040a;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-body{display:flex;justify-content:center;align-items:center}
-#app{width:min(1200px,100vw);height:min(760px,100vh);position:relative;overflow:hidden;background:#02050c}
-canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
-button{font:inherit;color:var(--text);background:#11213a;border:1px solid #6b83a4;border-radius:10px;padding:10px 13px;cursor:pointer}
-button:hover{background:#193050} button:active{transform:translateY(1px)}
-#topbar{position:absolute;z-index:30;left:10px;right:10px;top:10px;display:flex;gap:7px;align-items:center;pointer-events:none}
-.pill,#topbar button{pointer-events:auto;background:rgba(6,12,22,.84);backdrop-filter:blur(4px)}
-.pill{padding:7px 10px;border:1px solid #344864;border-radius:999px;font-size:12px}
+html,body{margin:0;height:100%;overflow:hidden;background:#02040a;color:var(--text);font-family:Georgia,Times,serif}
+body{display:flex;align-items:center;justify-content:center}
+#app{position:relative;width:min(1200px,100vw);height:min(760px,100vh);overflow:hidden;background:#04070d}
+canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+button{font:inherit;color:var(--text);background:#12233b;border:1px solid #7188a6;border-radius:10px;padding:9px 13px;cursor:pointer}
+button:active{transform:translateY(1px)}
+button:hover{background:#1b3150}
+#topbar{position:absolute;z-index:50;top:10px;left:10px;right:10px;display:flex;align-items:center;gap:7px;pointer-events:none}
+.pill,#topbar button{pointer-events:auto;background:rgba(4,10,18,.86);backdrop-filter:blur(5px)}
+.pill{padding:6px 9px;border:1px solid #324761;border-radius:999px;font:12px/1.1 system-ui,sans-serif}
 .spacer{flex:1}
-#dialog{position:absolute;z-index:40;left:4%;right:4%;bottom:10%;padding:15px 17px;background:rgba(7,13,24,.97);border:2px solid #7389a7;border-radius:15px;box-shadow:0 14px 50px rgba(0,0,0,.55);display:none}
+#dialog{position:absolute;left:3.2%;right:3.2%;bottom:10%;z-index:70;background:rgba(6,12,22,.98);border:2px solid #748aa7;border-radius:16px;box-shadow:0 18px 60px rgba(0,0,0,.6);padding:15px 16px;display:none;font-family:system-ui,sans-serif}
 #dialog.show{display:block}
-#qTitle{margin:0 0 7px;color:var(--gold);font-size:20px}
-#qText{margin:0 0 12px;line-height:1.45;color:#dfe7f0}
+#qTitle{margin:0 0 6px;color:var(--gold);font:700 20px Georgia,serif}
+#qText{margin:0 0 12px;color:#e3ebf4;line-height:1.45}
 #answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.answer{text-align:left;min-height:60px;line-height:1.28}
-.answer span{display:inline-grid;place-items:center;width:25px;height:25px;margin-right:7px;border:1px solid #6f819c;border-radius:7px;background:#0a1220;font-weight:700}
+.answer{text-align:left;min-height:60px;line-height:1.3}
+.answer span{display:inline-grid;place-items:center;width:26px;height:26px;margin-right:7px;border-radius:7px;background:#0a1220;border:1px solid #69809e;font-weight:700}
 #hangman{display:none}
 #hangman.show{display:block}
-#hint{color:#bdcbe0;font-size:14px;line-height:1.35}
-#word{font:700 22px ui-monospace,Consolas,monospace;letter-spacing:5px;margin:8px 0 9px}
-#hangGrid{display:grid;grid-template-columns:repeat(13,1fr);gap:6px;max-height:175px;overflow:auto}
-.letter{padding:8px 4px;min-width:30px}
+#hint{font-size:14px;color:#bcc9da;line-height:1.4}
+#word{font:700 22px ui-monospace,Consolas,monospace;letter-spacing:5px;margin:8px 0}
+#hangGrid{display:grid;grid-template-columns:repeat(13,1fr);gap:5px;max-height:160px;overflow:auto}
+.letter{padding:8px 3px;min-width:30px}
 .letter:disabled{opacity:.35}
-.meta{display:flex;justify-content:space-between;gap:8px;margin-top:10px;color:#8fa1b8;font-size:12px}
-#touch{position:absolute;left:14px;right:14px;bottom:12px;z-index:35;display:none;justify-content:space-between;align-items:end;pointer-events:none}
-.touchGroup{display:flex;gap:10px;pointer-events:auto}
-.touchBtn{width:68px;height:68px;border-radius:18px;font-size:29px;touch-action:none;user-select:none;background:rgba(11,24,43,.9);border:2px solid #748bab;box-shadow:0 7px 18px rgba(0,0,0,.35)}
-.actionBtn{width:94px;height:94px;border-radius:50%;font-size:14px;font-weight:800;background:rgba(92,64,26,.96);border-color:#efca72}
-#toast{position:absolute;z-index:50;top:59px;left:50%;transform:translateX(-50%);padding:8px 12px;border:1px solid #435c7c;background:rgba(7,13,24,.95);border-radius:999px;font-size:13px;display:none;white-space:nowrap}
+.meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#8ea0b7;margin-top:10px}
+#touch{position:absolute;z-index:60;left:14px;right:14px;bottom:12px;display:none;justify-content:space-between;align-items:end;pointer-events:none}
+.touchgrp{display:flex;gap:10px;pointer-events:auto}
+.touchBtn{width:70px;height:70px;border-radius:19px;font:700 29px system-ui,sans-serif;background:rgba(10,24,44,.92);border:2px solid #7288a5;box-shadow:0 8px 20px rgba(0,0,0,.35);touch-action:none;user-select:none}
+.actionBtn{width:96px;height:96px;border-radius:50%;font-size:14px;background:rgba(96,66,25,.97);border-color:#eec973}
+#toast{position:absolute;z-index:90;top:60px;left:50%;transform:translateX(-50%);padding:8px 12px;border-radius:999px;background:rgba(6,12,22,.96);border:1px solid #46607f;font:13px system-ui,sans-serif;display:none;white-space:nowrap}
 #toast.show{display:block}
-#titlePanel{position:absolute;inset:0;z-index:45;display:grid;grid-template-columns:37% 63%;align-items:center;padding:4vw;background:linear-gradient(90deg,rgba(2,6,13,.97),rgba(4,8,15,.92) 37%,rgba(4,8,15,.48) 70%,rgba(4,8,15,.84))}
-.titleArt{display:flex;align-items:center;justify-content:center}.titleArt img{width:min(360px,34vw);border:2px solid #6d819e;box-shadow:0 16px 55px rgba(0,0,0,.55)}
-.titleText h1{margin:0;font:700 clamp(38px,5vw,72px)/.92 Georgia,serif;color:#f1d39b;letter-spacing:1px}
-.sub{max-width:610px;color:#c5d0df;font-size:clamp(14px,1.35vw,19px);line-height:1.45;margin:16px 0 19px}
-.features{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:640px;margin-bottom:17px}
-.feature{padding:9px 11px;border:1px solid #304764;background:rgba(15,28,48,.72);border-radius:10px;font-size:13px}
-#startBtn{font-size:17px;padding:13px 18px;background:#6d4c1b;border-color:#efc875}
-#credits{font-size:12px;color:#8fa0b7;margin-top:10px}
-#endScreen{position:absolute;inset:0;z-index:60;display:none;place-items:center;background:linear-gradient(180deg,rgba(3,7,13,.55),rgba(3,7,13,.96))}
+
+#titlePanel{position:absolute;inset:0;z-index:80;display:grid;grid-template-columns:35% 65%;align-items:center;padding:4vw;background:
+linear-gradient(90deg,rgba(3,7,13,.98),rgba(4,8,15,.95) 35%,rgba(4,8,15,.60) 70%,rgba(4,8,15,.86)),
+radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
+.titleArt{display:flex;justify-content:center;align-items:center}
+.titleArt img{width:min(355px,34vw);border:2px solid #6c819d;box-shadow:0 17px 60px rgba(0,0,0,.6)}
+.titleText h1{margin:0;font:700 clamp(39px,5vw,73px)/.9 Georgia,serif;color:#f0d49d;letter-spacing:1px}
+.sub{max-width:640px;margin:16px 0 19px;color:#c6d1df;font:clamp(14px,1.35vw,19px)/1.45 system-ui,sans-serif}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:645px;margin-bottom:17px}
+.feature{padding:9px 11px;border:1px solid #304866;background:rgba(13,26,46,.76);border-radius:10px;font:13px system-ui,sans-serif;color:#dce5ee}
+#startBtn{font:700 17px system-ui,sans-serif;background:#6b4a1a;border-color:#ecc773;padding:13px 18px}
+#credits{font:12px system-ui,sans-serif;color:#8d9fb5;margin-top:10px}
+
+#conversation{position:absolute;inset:0;z-index:65;display:none;background:linear-gradient(180deg,rgba(3,8,15,.76),rgba(4,9,16,.95))}
+#conversation.show{display:flex}
+.convPanel{position:absolute;left:4%;right:4%;bottom:8%;min-height:280px;border:2px solid #7388a5;border-radius:18px;background:rgba(8,16,29,.98);box-shadow:0 20px 65px rgba(0,0,0,.65);padding:26px 28px 21px;display:grid;grid-template-columns:27% 46% 27%;align-items:end;gap:15px}
+.charCard{text-align:center}
+.charLabel{display:inline-block;padding:5px 9px;border:1px solid #4b607d;border-radius:999px;background:#0b1526;color:#e8d8bb;font:700 12px system-ui,sans-serif;margin-bottom:8px}
+.spriteBox{height:190px;display:flex;align-items:end;justify-content:center}
+.dialogueBubble{position:relative;min-height:165px;padding:19px 21px;border:2px solid #9a8159;background:#191b22;border-radius:15px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+.dialogueBubble:before{content:"";position:absolute;left:-14px;bottom:25px;border-width:10px 14px 10px 0;border-style:solid;border-color:transparent #9a8159 transparent transparent}
+.dialogueBubble:after{content:"";position:absolute;left:-10px;bottom:27px;border-width:8px 11px 8px 0;border-style:solid;border-color:transparent #191b22 transparent transparent}
+#convName{color:var(--gold);font:bold 18px Georgia,serif;margin-bottom:6px}
+#convText{font:17px/1.5 Georgia,serif;color:#eee5d4}
+#convHint{margin-top:10px;color:#aeb9c9;font:12px system-ui,sans-serif}
+#convBtn{position:absolute;right:22px;bottom:16px;background:#63471d;border-color:#e6c16d;font-weight:700}
+
+#endScreen{position:absolute;inset:0;z-index:95;display:none;place-items:center;background:rgba(3,6,11,.90)}
 #endScreen.show{display:grid}
-.endCard{width:min(760px,92%);text-align:center;background:rgba(10,18,31,.97);border:2px solid #7589a7;border-radius:18px;padding:25px;box-shadow:0 18px 60px rgba(0,0,0,.55)}
-.endCard h1{margin:0 0 9px;color:var(--gold);font-size:34px}.endCard p{max-width:620px;margin:0 auto 18px;color:#c8d3e1;line-height:1.5}
-.endActions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.endCard{width:min(760px,92%);padding:28px;text-align:center;background:rgba(8,16,29,.98);border:2px solid #7488a4;border-radius:18px;box-shadow:0 20px 70px rgba(0,0,0,.65)}
+.endCard h1{margin:0 0 10px;color:var(--gold);font:700 35px Georgia,serif}
+.endCard p{max-width:620px;margin:0 auto 18px;color:#c7d2df;font:16px/1.55 system-ui,sans-serif}
+.endActions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+
 @media (max-width:800px){
-  #titlePanel{grid-template-columns:1fr;padding:22px 18px;background:linear-gradient(180deg,rgba(2,6,13,.83),rgba(3,7,13,.96))}
+  #titlePanel{grid-template-columns:1fr;padding:22px 18px;background:linear-gradient(180deg,rgba(3,7,13,.86),rgba(3,7,13,.98))}
   .titleArt{display:none}.features{grid-template-columns:1fr}
-  #dialog{left:2.5%;right:2.5%;bottom:23%;padding:12px}
+  #touch{display:flex}
+  #dialog{left:2.2%;right:2.2%;bottom:22%;padding:12px}
   #answers{grid-template-columns:1fr}
   #hangGrid{grid-template-columns:repeat(9,1fr)}
-  #touch{display:flex}.pill{font-size:11px;padding:6px 8px}#topbar button{font-size:11px;padding:6px 8px}
+  #conversation{padding-bottom:2%}
+  .convPanel{left:2%;right:2%;bottom:19%;min-height:365px;padding:12px;grid-template-columns:1fr 1fr;grid-template-rows:150px auto;gap:7px}
+  .spriteBox{height:145px}
+  .charCard:nth-child(1){grid-column:1}.charCard:nth-child(3){grid-column:2}
+  .dialogueBubble{grid-column:1/3;grid-row:2;min-height:130px;padding:13px 14px}
+  .dialogueBubble:before,.dialogueBubble:after{display:none}
+  #convText{font-size:15px}
+  #convBtn{right:13px;bottom:10px}
+  .pill{font-size:11px;padding:6px 8px}.pill:nth-child(3){display:none}
+  #topbar button{font-size:11px;padding:6px 8px}
 }
 @media (pointer:coarse){#touch{display:flex}}
 </style>
@@ -67,7 +102,7 @@ button:hover{background:#193050} button:active{transform:translateY(1px)}
 <canvas id="game" width="1200" height="720"></canvas>
 
 <div id="topbar">
-  <div class="pill" id="stagePill">CAPÍTULO 1/4</div>
+  <div class="pill" id="stagePill">DESAFIO 1/4</div>
   <div class="pill" id="lifePill">♥ ♥ ♥</div>
   <div class="pill" id="musicPill">♫ desligada</div>
   <div class="spacer"></div>
@@ -77,6 +112,25 @@ button:hover{background:#193050} button:active{transform:translateY(1px)}
 
 <div id="toast"></div>
 
+<div id="conversation">
+  <div class="convPanel">
+    <div class="charCard">
+      <div class="charLabel">O INTERLOCUTOR</div>
+      <div class="spriteBox" id="interlocutorSprite"></div>
+    </div>
+    <div class="dialogueBubble">
+      <div id="convName">O Interlocutor</div>
+      <div id="convText"></div>
+      <div id="convHint">Uma conversa antes do desafio.</div>
+    </div>
+    <div class="charCard">
+      <div class="charLabel">NIETZSCHE</div>
+      <div class="spriteBox" id="nietzscheSprite"></div>
+    </div>
+    <button id="convBtn">Continuar ▶</button>
+  </div>
+</div>
+
 <div id="dialog">
   <h2 id="qTitle"></h2>
   <p id="qText"></p>
@@ -84,35 +138,30 @@ button:hover{background:#193050} button:active{transform:translateY(1px)}
   <div id="hangman">
     <div id="hint"></div>
     <div id="word"></div>
-    <div style="color:#dce5ef;margin:4px 0 8px">Erros: <b id="hangErrors">0/3</b></div>
+    <div style="color:#dae3ed;margin:4px 0 8px">Erros: <b id="hangErrors">0/3</b></div>
     <div id="hangGrid"></div>
   </div>
-  <div class="meta"><span>Toque nos botões — teclado é opcional.</span><span id="feedback"></span></div>
+  <div class="meta"><span>Toque para responder. Teclado é opcional.</span><span id="feedback"></span></div>
 </div>
 
 <div id="touch">
-  <div class="touchGroup">
-    <button class="touchBtn" id="leftBtn">◀</button>
-    <button class="touchBtn" id="rightBtn">▶</button>
-  </div>
-  <div class="touchGroup">
-    <button class="touchBtn actionBtn" id="actionBtn">AÇÃO</button>
-  </div>
+  <div class="touchgrp"><button class="touchBtn" id="leftBtn">◀</button><button class="touchBtn" id="rightBtn">▶</button></div>
+  <div class="touchgrp"><button class="touchBtn actionBtn" id="actionBtn">AÇÃO</button></div>
 </div>
 
 <div id="titlePanel">
   <div class="titleArt"><img src="nietzsche_portrait.png" alt="Nietzsche em pixel art"></div>
   <div class="titleText">
     <h1>NIETZSCHE<br><span style="font-size:.60em">8-BIT</span></h1>
-    <div class="sub">O Caminho do Pensamento — atravesse quatro lugares simbólicos, responda aos desafios e chegue ao fim com suas três vidas.</div>
+    <div class="sub">O Caminho do Pensamento — percorra pequenos trechos de uma Europa do século XIX e atravesse quatro portões, cada um guardado por uma conversa filosófica.</div>
     <div class="features">
-      <div class="feature">🎮 Controle direto por toque</div>
-      <div class="feature">🎵 Trilha sonora real em loop</div>
-      <div class="feature">♥ 3 vidas e consequências</div>
-      <div class="feature">📖 Quatro desafios filosóficos</div>
+      <div class="feature">🏛️ Ruas históricas: pedra, ferro, carruagens e gás</div>
+      <div class="feature">🎭 Interlocutor + Nietzsche em cada desafio</div>
+      <div class="feature">🎵 Trilha sonora contínua em loop</div>
+      <div class="feature">📱 Controle completo por toque</div>
     </div>
     <button id="startBtn">▶ Começar aventura</button>
-    <div id="credits">Funciona no computador e no celular · GitHub Pages · sem dependências externas.</div>
+    <div id="credits">Sem bibliotecas externas · GitHub Pages · jogo em um único HTML + 2 recursos.</div>
   </div>
 </div>
 
@@ -120,10 +169,7 @@ button:hover{background:#193050} button:active{transform:translateY(1px)}
   <div class="endCard">
     <h1 id="endTitle"></h1>
     <p id="endText"></p>
-    <div class="endActions">
-      <button id="restartBtn">↻ Voltar ao início</button>
-      <button id="endMusicBtn">♫ Música</button>
-    </div>
+    <div class="endActions"><button id="restartBtn">↻ Voltar ao início</button><button id="endMusicBtn">♫ Música</button></div>
   </div>
 </div>
 
@@ -131,163 +177,351 @@ button:hover{background:#193050} button:active{transform:translateY(1px)}
 
 <script>
 (() => {
-const canvas=document.getElementById("game"),ctx=canvas.getContext("2d"),W=1200,H=720;
-const $=id=>document.getElementById(id);
-const UI={
- title:$("titlePanel"),dialog:$("dialog"),qTitle:$("qTitle"),qText:$("qText"),
- answers:$("answers"),hangman:$("hangman"),hint:$("hint"),word:$("word"),hangGrid:$("hangGrid"),
- hangErrors:$("hangErrors"),feedback:$("feedback"),stagePill:$("stagePill"),lifePill:$("lifePill"),
- musicPill:$("musicPill"),toast:$("toast"),end:$("endScreen"),endTitle:$("endTitle"),endText:$("endText"),music:$("music")
-};
-const stages=[
- {name:"O SALÃO DOS ÍDOLOS",q:"O que Nietzsche quer sugerir ao falar em “filosofar com o martelo”?",
-  answers:["Destruir fisicamente qualquer obra filosófica.","Examinar e questionar criticamente valores e ídolos tidos como absolutos.","Substituir a filosofia pela ciência experimental.","Rejeitar todo e qualquer conhecimento."],
-  correct:1,note:"O martelo funciona como instrumento de diagnóstico: testar os valores e ouvir se estão “ocos”."},
- {name:"A CAPELA ABANDONADA",q:"O que está em jogo na expressão “Deus está morto”?",
-  answers:["Uma tese sobre a existência biológica de um deus.","Uma afirmação de que a religião deixaria de existir imediatamente.","A crise dos fundamentos absolutos que davam sentido e valor à cultura ocidental.","A ideia de que somente a ciência poderia criar valores."],
-  correct:2,note:"A frase aponta para uma crise cultural: antigas garantias de sentido perdem sua força, abrindo o problema da criação de valores."},
- {name:"A BIBLIOTECA",q:"Qual é a crítica de Nietzsche ao cientificismo?",hang:true,word:"CIENTIFICISMO",
-  clue:"Crença de que a ciência é a explicação definitiva de tudo.",note:"Nietzsche critica transformar a ciência em um novo absoluto: fatos não resolvem, sozinhos, a questão de como valorar."},
- {name:"A TORRE DOS ESPELHOS",q:"O que significa perspectivismo em Nietzsche?",
-  answers:["Existe uma única perspectiva correta, válida para qualquer situação.","Toda perspectiva é igualmente verdadeira em qualquer contexto.","O conhecimento é situado em perspectivas; interpretar não é acessar um ponto de vista absolutamente neutro.","O conhecimento é impossível e qualquer afirmação vale tanto quanto outra."],
-  correct:2,note:"Perspectivismo não significa “vale tudo”: significa reconhecer que conhecer envolve posição, interesses, linguagem e condições de interpretação."}
-];
-let state="title",stage=0,lives=3,px=170,cam=0,vx=0,moving=false,interact=false,frame=0,last=performance.now(),active=null,hang=null,musicOn=false,timer;
-const keys={left:false,right:false};
+const c=document.getElementById("game"),ctx=c.getContext("2d"),W=1200,H=720,$=id=>document.getElementById(id);
+const UI={title:$("titlePanel"),conversation:$("conversation"),dialog:$("dialog"),qTitle:$("qTitle"),qText:$("qText"),
+answers:$("answers"),hang:$("hangman"),hint:$("hint"),word:$("word"),hangGrid:$("hangGrid"),hangErrors:$("hangErrors"),
+feedback:$("feedback"),stage:$("stagePill"),life:$("lifePill"),musicPill:$("musicPill"),musicBtn:$("musicBtn"),
+toast:$("toast"),end:$("endScreen"),endTitle:$("endTitle"),endText:$("endText"),audio:$("music"),
+convName:$("convName"),convText:$("convText"),convHint:$("convHint"),convBtn:$("convBtn")};
 
-function toast(t,ms=1900){UI.toast.textContent=t;UI.toast.classList.add("show");clearTimeout(timer);timer=setTimeout(()=>UI.toast.classList.remove("show"),ms)}
-function hud(){UI.stagePill.textContent=`CAPÍTULO ${Math.min(stage+1,4)}/4`;UI.lifePill.textContent="♥ ".repeat(Math.max(0,lives)).trim()||"SEM VIDAS";UI.musicPill.textContent=musicOn?"♫ ligada":"♫ desligada";$("musicBtn").textContent=musicOn?"♫ Música ON":"♫ Música OFF"}
+const stages=[
+ {name:"O SALÃO DOS ÍDOLOS",scene:0,gateX:770,
+  q:"O que Nietzsche quer sugerir ao falar em “filosofar com o martelo”?",
+  answers:["Destruir fisicamente qualquer obra filosófica.","Examinar e questionar criticamente valores e ídolos tidos como absolutos.","Substituir a filosofia pela ciência experimental.","Rejeitar todo e qualquer conhecimento."],
+  correct:1,
+  ask:"Friedrich, quando você fala em “filosofar com o martelo”, o que exatamente pretende testar?",
+  reply:"Não quero apenas destruir. Quero bater nos ídolos, ouvir onde são ocos e descobrir quais valores suportam o exame crítico.",
+  note:"O martelo funciona como instrumento de diagnóstico: testar os valores e ouvir se estão “ocos”."},
+ {name:"A CAPELA ABANDONADA",scene:1,gateX:790,
+  q:"O que está em jogo na expressão “Deus está morto”?",
+  answers:["Uma tese sobre a existência biológica de um deus.","Uma afirmação de que a religião deixaria de existir imediatamente.","A crise dos fundamentos absolutos que davam sentido e valor à cultura ocidental.","A ideia de que somente a ciência poderia criar valores."],
+  correct:2,
+  ask:"E quando você diz que “Deus está morto”, está falando simplesmente de religião?",
+  reply:"Não. A frase aponta para o desmoronamento de um fundamento que organizava o sentido e os valores do mundo ocidental.",
+  note:"A frase aponta para uma crise cultural: antigas garantias de sentido perdem sua força."},
+ {name:"A BIBLIOTECA",scene:2,gateX:800,hang:true,word:"CIENTIFICISMO",
+  clue:"Crença de que a ciência é a explicação definitiva de tudo.",
+  ask:"Nietzsche, qual é o problema de transformar a ciência em uma explicação total?",
+  reply:"A ciência conhece e descreve muitas coisas. O problema começa quando ela é convertida em um novo absoluto e pretende decidir, sozinha, o valor da existência.",
+  note:"A crítica não é à ciência em si, mas à sua transformação em um novo absoluto."},
+ {name:"A TORRE DOS ESPELHOS",scene:3,gateX:775,
+  q:"O que significa perspectivismo em Nietzsche?",
+  answers:["Existe uma única perspectiva correta, válida para qualquer situação.","Toda perspectiva é igualmente verdadeira em qualquer contexto.","O conhecimento é situado em perspectivas; interpretar não é acessar um ponto de vista absolutamente neutro.","O conhecimento é impossível e qualquer afirmação vale tanto quanto outra."],
+  correct:2,
+  ask:"Então, no perspectivismo, cada pessoa inventa a sua própria verdade?",
+  reply:"Não é tão simples. Conhecer é interpretar a partir de uma posição; isso não torna todas as interpretações equivalentes em qualquer contexto.",
+  note:"Perspectivismo não significa “vale tudo”: significa reconhecer posição, interesses, linguagem e condições de interpretação."}
+];
+
+let state="title",stage=0,lives=3,px=150,cam=0,vx=0,frame=0,last=performance.now(),moving=false,interact=false;
+let active=null,hang=null,convStep=0,musicOn=false,toastTimer,carriageOffset=0,pedOffset=0;
+
+function toast(t,ms=1900){UI.toast.textContent=t;UI.toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>UI.toast.classList.remove("show"),ms)}
+function hud(){UI.stage.textContent=`DESAFIO ${Math.min(4,stage+1)}/4`;UI.life.textContent="♥ ".repeat(Math.max(0,lives)).trim()||"SEM VIDAS";UI.musicPill.textContent=musicOn?"♫ ligada":"♫ desligada";UI.musicBtn.textContent=musicOn?"♫ Música ON":"♫ Música OFF"}
 async function setMusic(on){
-  if(on){try{await UI.music.play();musicOn=true}catch(e){musicOn=false;toast("O navegador bloqueou o áudio. Toque novamente em Música.")}}
-  else{UI.music.pause();musicOn=false}
+  if(on){try{await UI.audio.play();musicOn=true}catch(e){musicOn=false;toast("O navegador bloqueou o áudio. Toque novamente em Música.")}}
+  else{UI.audio.pause();musicOn=false}
   hud();
 }
-$("musicBtn").onclick=()=>setMusic(!musicOn);$("endMusicBtn").onclick=()=>setMusic(!musicOn);
+UI.musicBtn.onclick=()=>setMusic(!musicOn);$("endMusicBtn").onclick=()=>setMusic(!musicOn);
 $("fsBtn").onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
-function reset(){state="play";stage=0;lives=3;px=170;cam=0;vx=0;frame=0;UI.title.style.display="none";UI.end.classList.remove("show");hideDialog();hud()}
-$("startBtn").onclick=async()=>{reset();await setMusic(true);toast("Atravesse o cenário e toque em AÇÃO perto da entrada.",3000)}
+
+function reset(){state="play";stage=0;lives=3;px=150;cam=0;vx=0;frame=0;interact=false;UI.title.style.display="none";UI.end.classList.remove("show");UI.conversation.classList.remove("show");hideDialog();hud()}
+$("startBtn").onclick=async()=>{reset();await setMusic(true);toast("Caminho curto até o portão. Use AÇÃO quando chegar.",2800)}
 $("restartBtn").onclick=()=>reset();
+
 function hideDialog(){UI.dialog.classList.remove("show")}
-function openQuestion(){
-  active=stages[stage];state="question";UI.dialog.classList.add("show");UI.qTitle.textContent=active.name;UI.qText.textContent=active.q;UI.feedback.textContent="";
-  UI.answers.innerHTML="";UI.hangman.classList.remove("show");
-  if(active.hang){UI.answers.style.display="none";UI.hangman.classList.add("show");startHang()}else{
+function startConversation(){
+  active=stages[stage];state="conversation";convStep=0;
+  UI.convName.textContent="O Interlocutor";
+  UI.convText.textContent=active.ask;
+  UI.convHint.textContent="Uma conversa antes do desafio.";
+  UI.convBtn.textContent="Responder de Nietzsche ▶";
+  UI.conversation.classList.add("show");
+}
+UI.convBtn.onclick=()=>{
+  if(state!=="conversation")return;
+  if(convStep===0){
+    convStep=1;UI.convName.textContent="Nietzsche";UI.convText.textContent=active.reply;
+    UI.convHint.textContent="A fala prepara o tema, mas não entrega a resposta.";
+    UI.convBtn.textContent="Ver desafio ▶";
+  }else{
+    UI.conversation.classList.remove("show");state="question";showQuestion();
+  }
+};
+
+function showQuestion(){
+  active=stages[stage];UI.dialog.classList.add("show");UI.qTitle.textContent=active.name;UI.qText.textContent=active.q;UI.feedback.textContent="";
+  UI.answers.innerHTML="";UI.hang.classList.remove("show");
+  if(active.hang){UI.answers.style.display="none";UI.hang.classList.add("show");startHang()}
+  else{
     UI.answers.style.display="grid";
     active.answers.forEach((txt,i)=>{const b=document.createElement("button");b.className="answer";b.innerHTML=`<span>${i+1}</span>${txt}`;b.onclick=()=>choice(i);UI.answers.appendChild(b)})
   }
 }
-function choice(i){if(state!=="question")return;if(i===active.correct){UI.feedback.textContent="✓ correto";UI.feedback.style.color="var(--green)";setTimeout(complete,220)}else{UI.feedback.textContent="✗ -1 vida";UI.feedback.style.color="var(--red)";lose("Resposta incorreta.")}}
+function choice(i){
+  if(state!=="question")return;
+  if(i===active.correct){UI.feedback.textContent="✓ correto";UI.feedback.style.color="var(--green)";setTimeout(complete,230)}
+  else{UI.feedback.textContent="✗ -1 vida";UI.feedback.style.color="var(--red)";lose("Resposta incorreta.")}
+}
 function startHang(){hang={word:active.word,guessed:new Set(["C","I","N","T","F","S","M","O"]),errors:0};renderHang()}
 function renderHang(){
-  UI.word.textContent=hang.word.split("").map(c=>hang.guessed.has(c)?c:"_").join(" ");
+  UI.word.textContent=hang.word.split("").map(ch=>hang.guessed.has(ch)?ch:"_").join(" ");
   UI.hint.textContent="PISTA: "+active.clue+" A palavra começa com C.";
   UI.hangErrors.textContent=`${hang.errors}/3`;UI.hangGrid.innerHTML="";
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(ch=>{const b=document.createElement("button");b.className="letter";b.textContent=ch;b.disabled=hang.guessed.has(ch);b.onclick=()=>guess(ch);UI.hangGrid.appendChild(b)})
 }
 function guess(ch){
   if(hang.guessed.has(ch))return;
-  if(hang.word.includes(ch)){hang.guessed.add(ch);UI.feedback.textContent="✓ boa letra";UI.feedback.style.color="var(--green)";renderHang();if(hang.word.split("").every(c=>hang.guessed.has(c)))setTimeout(complete,240)}
+  if(hang.word.includes(ch)){hang.guessed.add(ch);UI.feedback.textContent="✓ boa letra";UI.feedback.style.color="var(--green)";renderHang();if(hang.word.split("").every(ch=>hang.guessed.has(ch)))setTimeout(complete,250)}
   else{hang.errors++;UI.feedback.textContent="✗ erro";UI.feedback.style.color="var(--red)";renderHang();if(hang.errors>=3)lose("Três erros no desafio de letras.")}
 }
 function lose(reason){
   lives--;hud();hideDialog();
-  if(lives<=0){state="gameover";UI.endTitle.textContent="AS PORTAS SE FECHARAM";UI.endText.textContent="Você ficou sem vidas. O caminho recomeça do início. A ideia é testar, interpretar e tentar de novo.";UI.end.classList.add("show")}
-  else{state="play";px=170;cam=0;toast(`${reason} Restam ${lives} ${lives===1?"vida":"vidas"}.`,2400)}
+  if(lives<=0){state="gameover";UI.endTitle.textContent="AS PORTAS SE FECHARAM";UI.endText.textContent="Você ficou sem vidas. O caminho recomeça do início.";UI.end.classList.add("show")}
+  else{state="play";px=150;cam=0;toast(`${reason} Restam ${lives} ${lives===1?"vida":"vidas"}.`,2400)}
 }
 function complete(){
   hideDialog();toast(active.note,3200);
-  if(stage===3){state="win";setTimeout(()=>{UI.endTitle.textContent="VOCÊ CHEGOU AO FIM";UI.endText.textContent="Os quatro desafios foram atravessados. Agora o jogo retorna ao começo — pensar continua sendo caminhar.";UI.end.classList.add("show")},700)}
-  else{stage++;state="play";px=170;cam=0;hud()}
+  if(stage===3){state="win";setTimeout(()=>{UI.endTitle.textContent="VOCÊ CHEGOU AO FIM";UI.endText.textContent="Os quatro portões foram atravessados. Agora a jornada retorna ao início: pensar continua sendo caminhar.";UI.end.classList.add("show")},700)}
+  else{stage++;state="play";px=150;cam=0;hud()}
 }
-function action(){if(state==="play")interact=true}
 
-function bindHold(id,prop){
-  const el=$(id);
-  const down=e=>{e.preventDefault();keys[prop]=true;el.setPointerCapture?.(e.pointerId)}
-  const up=e=>{e.preventDefault();keys[prop]=false}
-  el.addEventListener("pointerdown",down);el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);el.addEventListener("pointerleave",up)
-}
-bindHold("leftBtn","left");bindHold("rightBtn","right");$("actionBtn").addEventListener("pointerdown",e=>{e.preventDefault();action()});
-addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.left=true;if(k==="arrowright"||k==="d")keys.right=true;if(k==="enter"||k===" ")action();if(k==="m")setMusic(!musicOn)});
-addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.left=false;if(k==="arrowright"||k==="d")keys.right=false});
+const key={left:false,right:false};
+function bindHold(id,prop){const el=$(id);const down=e=>{e.preventDefault();key[prop]=true;el.setPointerCapture?.(e.pointerId)},up=e=>{e.preventDefault();key[prop]=false};el.addEventListener("pointerdown",down);el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);el.addEventListener("pointerleave",up)}
+bindHold("leftBtn","left");bindHold("rightBtn","right");$("actionBtn").addEventListener("pointerdown",e=>{e.preventDefault();interact=true});
+addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")key.left=true;if(k==="arrowright"||k==="d")key.right=true;if(k==="enter"||k===" ")interact=true;if(k==="m")setMusic(!musicOn)});
+addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")key.left=false;if(k==="arrowright"||k==="d")key.right=false});
 
-function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
-function circ(x,y,r,c){ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
-function sceneBackground(){
-  const pal=[["#08162a","#294a73"],["#090d20","#463049"],["#07161a","#1f4a4f"],["#120b1d","#4a2458"]][stage];
+function r(x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
+function circ(x,y,rad,col){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill()}
+function line(x1,y1,x2,y2,col,w=1){ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
+
+function sky(){
+  const pal=[
+    ["#0a192d","#405675"],["#0a1020","#4a3040"],["#08171c","#2a4c4d"],["#120d20","#513052"]
+  ][stage];
   const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,pal[0]);g.addColorStop(1,pal[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  circ(1010-(cam*.08)%120,110,46,"#e0d4b8");
-  rect(990-(cam*.08)%120,96,10,5,"#b7ac95");rect(1020-(cam*.08)%120,127,7,5,"#b7ac95");
-  for(let i=0;i<66;i++){const x=(i*173+stage*61-(cam*.16)%1200)%1200,y=28+(i*41)%170;rect(x,y,i%5===0?3:2,i%5===0?3:2,i%3===0?"#dfd7c5":"#9fb1c8")}
-  ctx.fillStyle="#1a263a";
-  ctx.beginPath();ctx.moveTo(0,465);for(let x=-50;x<W+160;x+=125){const h=100+Math.sin((x+cam*.12)/100)*28;ctx.lineTo(x,465-h);ctx.lineTo(x+55,465-h-18);ctx.lineTo(x+125,465-h+20)}ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+
+  // moon and stars
+  circ(1015-(cam*.06)%140,108,46,"#e4d8ba");
+  r(998-(cam*.06)%140,92,11,4,"#b8ae96");r(1026-(cam*.06)%140,126,7,5,"#b8ae96");
+  for(let i=0;i<58;i++){const x=(i*181+stage*47-(cam*.11)%1200)%1200,y=35+(i*43)%160;r(x,y,i%6===0?3:2,i%4===0?"#ded6c3":"#9bb0cb")}
 }
-function castleFar(){
-  const base=468;
-  for(let i=0;i<10;i++){const x=i*155-(cam*.35%155)-70,h=90+(i%3)*31;rect(x,base-h,105,h,"#0b1322");for(let k=0;k<3;k++)rect(x+12+k*30,base-h-15,18,15,"#0b1322");for(let yy=170;yy<390;yy+=48)rect(x+28,yy,15,18,i%2?"#e3a04b":"#c57d35")}
-  const cx=860-(cam*.17%480);rect(cx,175,240,293,"#09111e");
-  for(const tx of [cx-12,cx+66,cx+155,cx+228]){rect(tx,128,55,340,"#07101a");rect(tx+12,102,31,28,"#07101a");for(let yy=165;yy<395;yy+=47)rect(tx+18,yy,15,18,"#d58b3c")}
+
+function distantRidge(){
+  ctx.fillStyle="#24344b";ctx.beginPath();ctx.moveTo(0,470);
+  for(let x=-80;x<W+140;x+=130){let h=85+Math.sin((x+cam*.07)/95)*24;ctx.lineTo(x,470-h);ctx.lineTo(x+62,470-h-18);ctx.lineTo(x+130,470-h+17)}
+  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
 }
-function ground(){
-  rect(0,468,W,252,"#111a25");for(let y=470;y<720;y+=14)rect(0,y,W,2,y%28===0?"#26364a":"#192637");
-  for(let i=0;i<12;i++){const x=i*390-(cam*.72%390)+130;rect(x,370,6,98,"#4a4a48");rect(x-10,354,25,17,"#5d4b36");circ(x+3,349,18+8*Math.sin(frame/12+i),"rgba(239,174,73,.10)");rect(x-4,344,14,11,"#efbf69")}
+
+function architecture(){
+  // Historically styled streets: narrow façades, shutters, slate roofs, stone bases, no modern skyline.
+  const drift=(cam*.55)%520;
+  for(let i=-1;i<4;i++){
+    const x=i*520-drift;
+    // building body
+    r(x,258,460,214,stage%2?"#66524d":"#574f48");
+    // base masonry
+    for(let bx=x;bx<x+460;bx+=23) r(bx,440,19,28,(bx/23)%2?"#3d4348":"#474b4e");
+    // upper floors and windows
+    for(let floor=0;floor<2;floor++){
+      for(let win=0;win<5;win++){
+        const wx=x+42+win*79;
+        r(wx,286+floor*69,38,48,"#2e2a2b");
+        r(wx+5,291+floor*69,28,38,stage===1?"#b18f5b":"#7e725e");
+        r(wx+16,291+floor*69,3,38,"#564d48");
+        r(wx,308+floor*69,38,3,"#4d453f");
+        // shutters
+        r(wx-8,288+floor*69,6,45,"#2c3135");r(wx+40,288+floor*69,6,45,"#2c3135");
+      }
+    }
+    // roof
+    ctx.fillStyle="#202730";ctx.beginPath();ctx.moveTo(x-12,259);ctx.lineTo(x+88,205);ctx.lineTo(x+420,205);ctx.lineTo(x+475,259);ctx.closePath();ctx.fill();
+    // dormers
+    for(let d=0;d<4;d++){const dx=x+105+d*78;r(dx,224,33,32,"#303845");r(dx+7,231,19,15,"#7c6d60")}
+    // shop awnings / wooden signs
+    if(i%2===0){r(x+250,356,125,48,"#4d3927");r(x+242,350,142,10,"#3b2b22");r(x+270,365,90,17,"#c9a36a")}
+  }
+  // church tower at far end (not huge)
+  const tx=835-(cam*.12%700);
+  r(tx,194,92,278,"#4b4747");r(tx+19,142,54,52,"#353a42");r(tx+29,113,34,30,"#2e333b");
+  for(let yy=225;yy<405;yy+=53){r(tx+34,yy,25,30,"#c99a5d");r(tx+44,yy,4,30,"#6a5144")}
+  // iron fence
+  for(let x=-10-(cam*.65%25);x<W;x+=25){r(x,414,5,55,"#25282b");r(x-2,405,9,9,"#31363a")}
+  line(0,421,W,421,"#31383e",4)
 }
-function props(){
-  if(stage===0){for(let i=0;i<7;i++){const x=480+i*190-cam*.58;rect(x,432,74,18,"#657386");rect(x+8,412,58,20,"#738092");circ(x+37,399,10,"#b99763")}}
-  if(stage===1){for(let i=0;i<5;i++){const x=600+i*230-cam*.61;rect(x,335,88,133,"#111a2a");ctx.strokeStyle="#7b5949";ctx.lineWidth=3;ctx.strokeRect(x+12,347,64,105);}}
-  if(stage===2){for(let i=0;i<7;i++){const x=560+i*155-cam*.64;rect(x,340,96,127,"#182a3d");for(let r=0;r<4;r++)rect(x+11,354+r*24,74,10,r%2?"#284157":"#345269")}}
-  if(stage===3){for(let i=0;i<6;i++){const x=540+i*210-cam*.65;ctx.strokeStyle="#6b5276";ctx.lineWidth=3;ctx.strokeRect(x,344,132,112);ctx.strokeRect(x+13,357,106,86);ctx.strokeRect(x+24,368,84,64);circ(x+66,399,18,"rgba(236,205,176,.08)")}}
+
+function cobbles(){
+  r(0,468,W,252,"#151d27");
+  for(let y=470;y<720;y+=18)line(0,y,W,y,"#242f3c",2);
+  for(let y=478;y<720;y+=36){
+    const off=((y/36)%2)*18-(cam*.4%36);
+    for(let x=-60+off;x<W+60;x+=36){r(x,y,28,10,((x/36)%2)?"#27323e":"#222c38")}
+  }
+  // curb / sidewalk
+  r(0,465,W,7,"#39434b");
+  r(0,490,W,16,"#2a3138");
 }
-function gate(wx,label,accent){
-  const x=wx-cam;if(x<-180||x>W+180)return;
-  rect(x-73,388,146,82,"#1e2939");rect(x-64,327,23,143,"#364357");rect(x+41,327,23,143,"#364357");
-  ctx.strokeStyle=accent;ctx.lineWidth=5;ctx.beginPath();ctx.arc(x,398,62,Math.PI,0);ctx.stroke();
-  for(let i=-5;i<=5;i++)rect(x+i*10-2,349,4,80,"#76879a");
-  ctx.fillStyle="#f1d39b";ctx.font="700 13px system-ui";ctx.textAlign="center";ctx.fillText(label,x,307);
-  if(Math.abs(px-wx)<120){circ(x,397,79,"rgba(239,202,120,.05)");ctx.strokeStyle="rgba(239,202,120,.38)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,398,83+Math.sin(frame/8)*3,0,Math.PI*2);ctx.stroke()}
+
+function gasLamp(x,seed){
+  r(x,355,6,114,"#464b4b");r(x-9,345,24,15,"#4b3b2e");r(x-3,340,12,9,"#cba264");
+  // animated gas flame
+  circ(x+3,339,15+4*Math.sin(frame/8+seed),"rgba(239,183,91,.08)");
+  r(x-1,338+Math.sin(frame/5+seed)*1.4,8,6,"#efc36e");
+  r(x+2,331,3,7,"#e7a74e");
 }
-function player(){
-  const x=Math.round(px-cam),foot=565,walk=Math.floor(frame/7)%4,bob=moving?Math.sin(frame/3.1)*1.5:Math.sin(frame/17);
-  const a=[0,2,5,2][walk],b=[4,2,0,2][walk],s=[-4,-1,4,1][walk];
-  ctx.save();ctx.translate(x,foot+bob);
-  rect(-20,2,40,8,"rgba(0,0,0,.32)");
-  // long coat
-  rect(-17,-61,34,57,"#182537");rect(-23,-53,8,36,"#26374e");rect(15,-53,8,36,"#26374e");
+
+function environmentMotion(){
+  // Horse carriage: slow and clearly period-correct.
+  carriageOffset=(carriageOffset+0.35)%1700;
+  let x=1170-carriageOffset;
+  if(x<-180)x=1170;
+  // carriage body
+  r(x,425,105,29,"#171a1d");r(x+17,402,72,27,"#21272b");r(x+27,392,51,16,"#282e33");
+  // canopy
+  r(x+14,395,78,8,"#39424a");
+  // wheels with rotation-like spokes
+  for(const wx of [x+25,x+78]){circ(wx,456,14,"#111316");for(let a=0;a<8;a++){const ang=a*Math.PI/4+frame*.04;line(wx,456,wx+10*Math.cos(ang),456+10*Math.sin(ang),"#4a4d4f",2)}circ(wx,456,3,"#6c5a3f")}
+  // horse
+  r(x-34,428,31,16,"#5c4332");r(x-23,414,18,15,"#654834");r(x-9,410,9,12,"#654834");r(x-3,409,8,4,"#352922");r(x-31,442,6,24,"#403029");r(x-11,442,6,24,"#403029");
+  line(x-3,415,x-34,403,"#8b6a4b",2);line(x-4,415,x+4,401,"#8b6a4b",2);
+
+  // A couple of pedestrians in period silhouettes; they move slightly.
+  pedOffset=(pedOffset+0.15)%900;
+  for(let i=0;i<3;i++){
+    let pxm=280+i*350-pedOffset;
+    if(pxm<-40)pxm+=980;
+    r(pxm,430,12,32,"#1a2028");circ(pxm+6,424,7,"#c0906c");r(pxm-3,462,8,8,"#0e1319");r(pxm+6,462,8,8,"#0e1319");
+    if(i===1){r(pxm-4,412,20,5,"#3b2c22");r(pxm+1,405,10,8,"#33271f")}
+  }
+
+  // tree branches + subtle leaf flutter
+  const tx=145-(cam*.55%420);r(tx,355,10,118,"#302b28");line(tx+4,365,tx-58,300,"#302b28",9);line(tx+6,375,tx+74,310,"#302b28",8);
+  for(let i=0;i<24;i++){const lx=tx-75+(i*39)%160+(Math.sin(frame/16+i)*2);const ly=286+(i*21)%70+Math.sin(frame/13+i);circ(lx,ly,10+(i%3)*3,"rgba(31,56,47,.72)")}
+
+  // chimney smoke
+  for(let i=0;i<5;i++){const sx=735-(cam*.36%500)+i*7,sy=235-i*17+Math.sin(frame/17+i)*4;circ(sx,sy,9+i*2,"rgba(190,190,190,.07)")}
+}
+
+function gate(){
+  const wx=stages[stage].gateX,x=wx-cam;
+  r(x-84,394,168,75,"#252d35");
+  r(x-67,310,28,161,"#3b4147");r(x+39,310,28,161,"#3b4147");
+  ctx.strokeStyle=["#d7a554","#af91c9","#78b7ba","#bd83ba"][stage];ctx.lineWidth=5;ctx.beginPath();ctx.arc(x,402,72,Math.PI,0);ctx.stroke();
+  // wrought-iron gate
+  for(let i=-6;i<=6;i++){r(x+i*10-2,355,4,85,"#72797e")}
+  for(let y=372;y<435;y+=18)r(x-63,y,126,4,"#51575c");
+  for(let i=-4;i<=4;i+=2){line(x+i*12,360,x+i*12,426,"#9a7b4e",2)}
+  ctx.fillStyle="#efcf92";ctx.textAlign="center";ctx.font="700 15px Georgia,serif";ctx.fillText(stages[stage].name,x,284);
+  // small heraldic plate
+  r(x-43,293,86,27,"#1c232d");ctx.strokeStyle="#8b744f";ctx.lineWidth=2;ctx.strokeRect(x-43,293,86,27);
+  ctx.fillStyle="#c9ae78";ctx.font="700 11px system-ui,sans-serif";ctx.fillText("PORTÃO",x,311);
+  if(Math.abs(px-wx)<110){circ(x,402,88,"rgba(239,204,123,.05)");ctx.strokeStyle="rgba(239,204,123,.42)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,402,92+Math.sin(frame/9)*4,0,Math.PI*2);ctx.stroke()}
+}
+
+function drawNietzsche(big=false){
+  const s=big?2.25:1,ox=big?0:Math.round(px-cam),oy=big?0:565;
+  ctx.save(); if(big)ctx.translate(0,20); else ctx.translate(ox,oy);
+  const walk=Math.floor(frame/7)%4,a=[0,2,5,2][walk],b=[4,2,0,2][walk],sw=[-4,-1,4,1][walk],bob=(!big&&moving)?Math.sin(frame/3.1)*1.5:0;
+  ctx.translate(0,bob);ctx.scale(s,s);
+  // silhouette/shadow
+  if(!big){r(-22,3,44,8,"rgba(0,0,0,.30)")}
+  // coat
+  r(-17,-61,34,57,"#182537");r(-23,-53,8,36,"#26374e");r(15,-53,8,36,"#26374e");
   // legs
-  rect(-11,-10,9,30,"#1c2430");rect(2,-10,9,30,"#1c2430");rect(-14,19+a,12,7,"#0b0f16");rect(2,19+b,12,7,"#0b0f16");rect(-17,25+a,18,5,"#070a0f");rect(0,25+b,18,5,"#070a0f");
-  // torso / shirt
-  rect(-14,-61,28,36,"#24334a");rect(-10,-60,20,31,"#3a4960");rect(-5,-60,10,31,"#ded7c8");rect(-3,-50,6,13,"#b99b73");
+  r(-11,-10,9,30,"#1c2430");r(2,-10,9,30,"#1c2430");r(-14,19+a,12,7,"#0b0f16");r(2,19+b,12,7,"#0b0f16");r(-17,25+a,18,5,"#070a0f");r(0,25+b,18,5,"#070a0f");
+  // torso
+  r(-14,-61,28,36,"#24334a");r(-10,-60,20,31,"#3a4960");r(-5,-60,10,31,"#ded7c8");r(-3,-50,6,13,"#b99b73");
   // arms
-  rect(-21,-55,7,28+Math.abs(s),"#27384f");rect(14,-53,7,27-Math.abs(s),"#27384f");rect(-24,-29+s,8,7,"#e5b180");rect(16,-29-s,8,7,"#e5b180");
-  // neck + face
-  rect(-8,-69,16,10,"#e2ac80");rect(-16,-91,32,28,"#ebb583");rect(-13,-98,26,9,"#ebb583");rect(-19,-88,5,10,"#d79d76");rect(14,-87,5,9,"#d79d76");rect(-13,-76,26,9,"#d59a74");
-  // hair blocks
-  rect(-18,-103,36,19,"#201713");rect(-14,-110,30,9,"#2b1c15");rect(-7,-114,20,7,"#332017");rect(-18,-99,7,17,"#2a1a15");rect(10,-100,9,18,"#261815");rect(-4,-109,10,5,"#72442b");rect(7,-106,8,5,"#613724");
-  // eyes / brow
-  rect(-11,-87,8,4,"#4d2d24");rect(4,-87,8,4,"#4d2d24");rect(-10,-83,5,4,"#28201e");rect(6,-83,5,4,"#28201e");
-  // nose + huge mustache
-  rect(-2,-84,5,10,"#c98562");rect(-13,-77,11,6,"#2b1b18");rect(2,-77,11,6,"#2b1b18");rect(-8,-73,18,6,"#1e1412");rect(-2,-70,7,4,"#2a1915");
-  // chin
-  rect(-7,-67,14,4,"#563126");
-  // buttons
+  r(-21,-55,7,28+Math.abs(sw),"#27384f");r(14,-53,7,27-Math.abs(sw),"#27384f");r(-24,-29+sw,8,7,"#e5b180");r(16,-29-sw,8,7,"#e5b180");
+  // head
+  r(-8,-69,16,10,"#e2ac80");r(-16,-91,32,28,"#ebb583");r(-13,-98,26,9,"#ebb583");r(-19,-88,5,10,"#d79d76");r(14,-87,5,9,"#d79d76");r(-13,-76,26,9,"#d59a74");
+  // hair
+  r(-18,-103,36,19,"#201713");r(-14,-110,30,9,"#2b1c15");r(-7,-114,20,7,"#332017");r(-18,-99,7,17,"#2a1a15");r(10,-100,9,18,"#261815");
+  r(-4,-109,10,5,"#72442b");r(7,-106,8,5,"#613724");
+  // eyes/brows
+  r(-11,-87,8,4,"#4d2d24");r(4,-87,8,4,"#4d2d24");r(-10,-83,5,4,"#28201e");r(6,-83,5,4,"#28201e");
+  // nose + moustache
+  r(-2,-84,5,10,"#c98562");r(-13,-77,11,6,"#2b1b18");r(2,-77,11,6,"#2b1b18");r(-8,-73,18,6,"#1e1412");r(-2,-70,7,4,"#2a1915");
+  r(-7,-67,14,4,"#563126");
   for(let yy=-53;yy>-22;yy+=9)circ(0,yy,1.7,"#d7b66f");
   ctx.restore();
 }
-function draw(){
-  sceneBackground();castleFar();ground();props();
-  const targets=[1120,2250,3300,4450],labels=["O SALÃO DOS ÍDOLOS","A CAPELA","A BIBLIOTECA","A TORRE"];
-  const acc=["#d6a556","#a98cc5","#75b5bb","#c27fb2"];
-  gate(targets[stage],labels[stage],acc[stage]);player();
+
+function drawInterlocutor(big=false){
+  ctx.save();
+  const s=big?2.25:1;
+  if(big)ctx.translate(0,18);
+  ctx.scale(s,s);
+  const ox=0,oy=big?0:565;
+  ctx.translate(ox,oy);
+  // longer silhouette, top hat, late-19th-century frock coat, cane and gloves
+  if(!big)r(-23,3,46,8,"rgba(0,0,0,.30)");
+  // cane
+  line(24,-49,34,27,"#6b5435",3);circ(34,27,2.5,"#af8a52");
+  // coat tails
+  r(-17,-61,34,57,"#2a2221");r(-22,-52,8,41,"#3d322d");r(14,-52,8,41,"#3d322d");
+  r(-13,-28,12,25,"#1e1a1a");r(1,-28,13,25,"#1e1a1a");
+  // trousers / shoes
+  r(-10,-9,8,30,"#25282b");r(3,-9,8,30,"#25282b");r(-15,20,14,6,"#111316");r(1,20,16,6,"#111316");
+  // vest / shirt
+  r(-13,-61,26,36,"#5e5147");r(-9,-60,18,28,"#a59a88");r(-4,-60,8,28,"#d8d0bd");
+  // arms
+  r(-21,-53,7,29,"#332a28");r(14,-53,7,29,"#332a28");r(-24,-29,8,7,"#e0ab7e");r(16,-29,8,7,"#e0ab7e");
+  // neck
+  r(-7,-70,14,11,"#dca77c");
+  // face
+  r(-15,-92,30,29,"#ddb080");r(-12,-98,24,8,"#ddb080");r(-18,-88,5,9,"#c58e6b");r(14,-87,5,9,"#c58e6b");
+  // hair + top hat
+  r(-16,-101,32,12,"#3a2a23");r(-11,-108,24,8,"#2a201c");r(-22,-115,44,7,"#1d1817");r(-14,-131,28,16,"#211a17");r(-20,-134,40,6,"#181413");
+  // facial details
+  r(-10,-86,7,3,"#55352a");r(4,-86,7,3,"#55352a");r(-9,-82,5,4,"#231d1c");r(5,-82,5,4,"#231d1c");r(-1,-84,4,10,"#bc795e");
+  // moustache + beard
+  r(-12,-76,10,6,"#443029");r(2,-76,10,6,"#443029");r(-7,-72,14,5,"#2a1d1a");r(-5,-67,10,5,"#483027");
+  // lapel highlights
+  line(-8,-60,-2,-31,"#d5b77d",2);line(8,-60,2,-31,"#d5b77d",2);
+  for(let yy=-53;yy>-24;yy+=9)circ(0,yy,1.6,"#d2b169");
+  ctx.restore();
 }
+
+function drawWorld(){
+  sky();distantRidge();architecture();cobbles();
+  for(let i=0;i<10;i++)gasLamp(i*170-(cam*.65%170)+65,i);
+  environmentMotion();gate();drawNietzsche(false);
+}
+
 function update(dt){
   frame+=dt*60;if(state!=="play")return;
-  const dir=(keys.right?1:0)-(keys.left?1:0);moving=!!dir;
-  vx+=dir*.82;vx*=.75;if(Math.abs(vx)>6)vx=6*Math.sign(vx);px+=vx;px=Math.max(150,Math.min(4560,px));
-  const t=[1120,2250,3300,4450][stage];
-  if(Math.abs(px-t)<120&&interact){interact=false;openQuestion()}
-  cam+=(px-340-cam)*.09;cam=Math.max(0,Math.min(3500,cam));interact=false;
+  const dir=(key.right?1:0)-(key.left?1:0);moving=!!dir;
+  vx+=dir*.95;vx*=.73;if(Math.abs(vx)>6)vx=6*Math.sign(vx);px+=vx;
+  px=Math.max(145,Math.min(stages[stage].gateX+125,px));
+  const gx=stages[stage].gateX;
+  if(Math.abs(px-gx)<105 && interact){interact=false;startConversation()}
+  // short walk; almost always keep the gate on the same screen.
+  cam+=(px-260-cam)*.13;cam=Math.max(0,Math.min(410,cam));interact=false;
 }
-function loop(now){const dt=Math.min(.04,(now-last)/1000);last=now;update(dt);draw();requestAnimationFrame(loop)}
+
+function drawConversation(){
+  // Repaint the world, then dim it. The two characters are drawn enlarged in the foreground.
+  drawWorld();
+  ctx.fillStyle="rgba(4,8,15,.66)";ctx.fillRect(0,0,W,H);
+  // subtle vignette and warm gas-lamp bloom
+  const g=ctx.createRadialGradient(W/2,360,80,W/2,360,620);g.addColorStop(0,"rgba(194,147,77,.08)");g.addColorStop(1,"rgba(0,0,0,.33)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+  // Draw enlarged character sprites to canvas placeholders.
+  // We draw them into temporary positions rather than using external sprite libraries.
+  ctx.save();ctx.translate(175,508);drawInterlocutor(true);ctx.restore();
+  ctx.save();ctx.translate(1025,508);drawNietzsche(true);ctx.restore();
+}
+
+function loop(now){
+  const dt=Math.min(.04,(now-last)/1000);last=now;
+  if(state==="conversation"){drawConversation()}
+  else {drawWorld()}
+  update(dt);
+  requestAnimationFrame(loop)
+}
 loop(performance.now());
 })();
 </script>
