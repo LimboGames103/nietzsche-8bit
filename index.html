@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nietzsche 8-Bit — O Caminho do Pensamento</title>
 <style>
 :root{
@@ -10,10 +10,10 @@
   --text:#f2e8d8; --muted:#adbbcd; --gold:#e9c272; --red:#eb7272; --green:#82d599;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;overflow:hidden;background:#02040a;color:var(--text);font-family:Georgia,Times,serif}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;color:var(--text);font-family:Georgia,Times,serif;overscroll-behavior:none}
 body{display:flex;align-items:center;justify-content:center}
-#app{position:relative;width:min(1200px,100vw);height:min(760px,100vh);overflow:hidden;background:#04070d}
-canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+#app{position:relative;width:min(100vw,calc(100vh * 1.6666667));height:min(100vh,calc(100vw / 1.6666667));aspect-ratio:5/3;overflow:hidden;background:#04070d;transform-origin:center center}
+canvas{position:absolute;inset:0;display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
 button{font:inherit;color:var(--text);background:#12233b;border:1px solid #7188a6;border-radius:10px;padding:9px 13px;cursor:pointer}
 button:active{transform:translateY(1px)}
 button:hover{background:#1b3150}
@@ -86,34 +86,84 @@ radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
 .endCard p{max-width:620px;margin:0 auto 18px;color:#c7d2df;font:16px/1.55 system-ui,sans-serif}
 .endActions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
 
+
+#rotateGate{position:fixed;inset:0;z-index:9999;display:none;place-items:center;background:#030711;padding:24px;text-align:center;font-family:system-ui,sans-serif}
+#rotateGate .rotateCard{max-width:420px;padding:24px 20px;border:2px solid #7188a6;border-radius:18px;background:#0b1524;box-shadow:0 18px 60px rgba(0,0,0,.7)}
+#rotateGate .phoneIcon{font-size:54px;display:block;margin-bottom:9px;animation:turnPhone 1.8s ease-in-out infinite}
+#rotateGate h2{margin:0 0 8px;color:#efd08f;font:700 24px Georgia,serif}
+#rotateGate p{margin:0;color:#c9d4e0;font:15px/1.45 system-ui,sans-serif}
+@keyframes turnPhone{0%,25%{transform:rotate(0deg)}65%,100%{transform:rotate(90deg)}}
+
+@media (orientation:portrait) and (pointer:coarse){
+  #rotateGate{display:grid}
+  #app{visibility:hidden}
+}
+
 @media (max-width:800px){
-  #titlePanel{grid-template-columns:1fr;padding:22px 18px;background:linear-gradient(180deg,rgba(3,7,13,.86),rgba(3,7,13,.98))}
-  .titleArt{display:none}.features{grid-template-columns:1fr}
-  #touch{display:flex}
-  #dialog{left:2.2%;right:2.2%;bottom:22%;padding:12px}
-  #answers{grid-template-columns:1fr}
-  #hangGrid{grid-template-columns:repeat(9,1fr)}
-  #conversation{padding-bottom:2%}
-  .convPanel{left:2%;right:2%;top:5%;bottom:17%;padding:9px;gap:8px}
-  .convPeople{grid-template-columns:1fr;gap:10px;overflow:auto;padding-right:2px}
-  .speakerCard{grid-template-columns:92px 1fr;grid-template-rows:auto auto;gap:5px 9px;align-items:center}
-  .speakerPortrait{grid-row:1/3;height:108px}
-  .speakerName{grid-column:1;grid-row:2;font-size:9px;background:rgba(4,9,17,.85);margin-top:-25px;z-index:2;padding:3px}
-  .speechBubble{grid-column:2;grid-row:1/3;min-height:108px;padding:11px 12px}
-  .speechBubble:before{left:-12px;top:50%;transform:translateY(-50%);border-width:11px 12px 11px 0;border-color:transparent #6b87a7 transparent transparent}
+  #titlePanel{grid-template-columns:31% 69%;padding:14px 18px;background:linear-gradient(90deg,rgba(3,7,13,.97),rgba(3,7,13,.78))}
+  .titleArt{display:flex}.titleArt img{width:min(210px,27vw);max-height:74vh;object-fit:cover}
+  .titleText h1{font-size:clamp(27px,5vw,47px)}
+  .sub{font-size:12px;line-height:1.32;margin:8px 0 10px}
+  .features{grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px}
+  .feature{padding:6px 7px;font-size:10px}
+  #startBtn{font-size:13px;padding:9px 12px}
+  #credits{display:none}
+
+  #touch{display:flex;left:max(9px,env(safe-area-inset-left));right:max(9px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom))}
+  .touchBtn{width:55px;height:55px;border-radius:15px;font-size:22px;opacity:.92}
+  .actionBtn{width:68px;height:68px;font-size:11px}
+
+  #topbar{top:max(5px,env(safe-area-inset-top));left:max(6px,env(safe-area-inset-left));right:max(6px,env(safe-area-inset-right));gap:4px}
+  .pill{font-size:9px;padding:4px 6px}
+  #topbar button{font-size:9px;padding:4px 6px}
+  #musicPill{display:none}
+
+  #dialog{left:5%;right:5%;top:8%;bottom:auto;max-height:78%;overflow:auto;padding:10px 12px;border-radius:12px}
+  #qTitle{font-size:16px;margin-bottom:4px}
+  #qText{font-size:12px;line-height:1.3;margin-bottom:7px}
+  #answers{grid-template-columns:1fr 1fr;gap:6px}
+  .answer{min-height:43px;padding:7px;font-size:11px}
+  .answer span{width:20px;height:20px;font-size:10px}
+  #word{font-size:16px;letter-spacing:3px}
+  #hint{font-size:11px}
+  #hangGrid{grid-template-columns:repeat(13,1fr);gap:3px;max-height:112px}
+  .letter{min-width:0;padding:5px 2px;font-size:10px}
+  .meta{font-size:9px;margin-top:5px}
+
+  #conversation{inset:0}
+  .convPanel{left:3%;right:3%;top:7%;bottom:7%;padding:10px 12px;gap:8px;grid-template-rows:1fr auto}
+  .convPeople{grid-template-columns:1fr 1fr;gap:12px;overflow:visible}
+  .speakerCard{display:grid;grid-template-columns:34% 66%;grid-template-rows:1fr;gap:7px;align-items:stretch;min-height:0}
+  .speakerPortrait{grid-column:1;grid-row:1;height:auto;min-height:0;border-radius:10px}
+  .speakerPortrait img{object-position:center 20%}
+  .speakerName{position:absolute;bottom:7px;left:5px;right:5px;margin:0;padding:3px 2px;border-radius:5px;background:rgba(4,8,15,.82);font-size:8px;z-index:2}
+  .speakerCard>div:first-child{position:relative}
+  .speechBubble{grid-column:2;grid-row:1;min-height:0;height:100%;padding:10px 11px;display:flex;flex-direction:column;justify-content:center}
+  .speechBubble:before{top:50%;left:-11px;transform:translateY(-50%);border-width:9px 11px 9px 0;border-color:transparent #6b87a7 transparent transparent}
   .speechBubble.interlocutor:before{border-color:transparent #aa8652 transparent transparent}
-  .speechLabel{font-size:13px;margin-bottom:4px}
-  .speechText{font-size:14px;line-height:1.38}
-  #convBtn{min-width:190px;font-size:12px;padding:9px 12px}
-  .summaryBox{padding:11px 12px}
-  .summaryBox p{font-size:13px;line-height:1.42}
-  .pill{font-size:11px;padding:6px 8px}.pill:nth-child(3){display:none}
-  #topbar button{font-size:11px;padding:6px 8px}
+  .speechLabel{font-size:11px;margin-bottom:4px}
+  .speechText{font-size:12px;line-height:1.35}
+  #convBtn{min-width:180px;padding:7px 12px;font-size:10px}
+
+  .endCard{width:min(760px,94%);max-height:88%;padding:14px 18px}
+  .endCard h1{font-size:24px;margin-bottom:5px}
+  .endCard>p{font-size:11px;line-height:1.35;margin-bottom:8px}
+  .summaryBox{padding:8px 10px;margin-bottom:9px}
+  .summaryBox h3{font-size:13px;margin-bottom:4px}
+  .summaryBox p{font-size:10px;line-height:1.32;margin:4px 0}
+  .endActions button{font-size:10px;padding:6px 9px}
 }
 @media (pointer:coarse){#touch{display:flex}}
 </style>
 </head>
 <body>
+<div id="rotateGate">
+  <div class="rotateCard">
+    <span class="phoneIcon">📱</span>
+    <h2>Gire o celular</h2>
+    <p>Este jogo foi desenhado para ser jogado na horizontal. Ao girar o aparelho, a aventura continua automaticamente.</p>
+  </div>
+</div>
 <div id="app">
 <canvas id="game" width="1200" height="720"></canvas>
 
@@ -123,7 +173,7 @@ radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
   <div class="pill" id="musicPill">♫ desligada</div>
   <div class="spacer"></div>
   <button id="musicBtn">♫ Música OFF</button>
-  <button id="fsBtn">⛶</button>
+  <button id="fsBtn">⛶ Tela cheia</button>
 </div>
 
 <div id="toast"></div>
@@ -179,7 +229,7 @@ radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
       <div class="feature">🏛️ Ruas históricas: pedra, ferro, carruagens e gás</div>
       <div class="feature">🎭 Um interlocutor próprio em cada desafio</div>
       <div class="feature">🎵 Trilha sonora contínua em loop</div>
-      <div class="feature">📱 Avanço automático até cada portão</div>
+      <div class="feature">📱 Otimizado para celular na horizontal</div>
     </div>
     <button id="startBtn">▶ Começar aventura</button>
     <div id="credits">Sem bibliotecas externas · GitHub Pages · jogo em um único HTML + 2 recursos.</div>
@@ -252,10 +302,25 @@ async function setMusic(on){
   hud();
 }
 UI.musicBtn.onclick=()=>setMusic(!musicOn);$("endMusicBtn").onclick=()=>setMusic(!musicOn);
-$("fsBtn").onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
+async function enterImmersive(){
+  try{
+    if(!document.fullscreenElement && document.documentElement.requestFullscreen){
+      await document.documentElement.requestFullscreen({navigationUI:"hide"});
+    }
+  }catch(e){}
+  try{
+    if(screen.orientation && screen.orientation.lock){
+      await screen.orientation.lock("landscape");
+    }
+  }catch(e){}
+}
+$("fsBtn").onclick=async()=>{
+  if(document.fullscreenElement){try{await document.exitFullscreen()}catch(e){}}
+  else await enterImmersive();
+};
 
 function reset(){state="play";stage=0;lives=3;px=150;cam=0;vx=0;frame=0;interact=false;autoRun=true;celebrationStart=0;UI.title.style.display="none";UI.end.classList.remove("show");UI.conversation.classList.remove("show");hideDialog();hud()}
-$("startBtn").onclick=async()=>{reset();await setMusic(true);toast("Nietzsche avançará sozinho e parará no próximo portão.",2800)}
+$("startBtn").onclick=async()=>{await enterImmersive();reset();await setMusic(true);toast("Modo celular: horizontal, avanço automático e parada no portão.",2800)}
 $("restartBtn").onclick=()=>reset();
 
 function hideDialog(){UI.dialog.classList.remove("show")}
@@ -337,7 +402,7 @@ function toggleAutoRun(){
 }
 $("leftBtn").addEventListener("pointerdown",e=>{e.preventDefault();key.left=true;autoRun=false});
 $("leftBtn").addEventListener("pointerup",e=>{e.preventDefault();key.left=false});
-$("leftBtn").addEventListener("pointercancel",()=>key.left=false);
+$("leftBtn").addEventListener("pointercancel",()=>key.left=false);$("leftBtn").addEventListener("lostpointercapture",()=>key.left=false);
 $("rightBtn").addEventListener("pointerdown",e=>{e.preventDefault();toggleAutoRun()});
 $("actionBtn").addEventListener("pointerdown",e=>{e.preventDefault();interact=true});
 addEventListener("keydown",e=>{
