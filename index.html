@@ -55,22 +55,30 @@ radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
 #startBtn{font:700 17px system-ui,sans-serif;background:#6b4a1a;border-color:#ecc773;padding:13px 18px}
 #credits{font:12px system-ui,sans-serif;color:#8d9fb5;margin-top:10px}
 
-#conversation{position:absolute;inset:0;z-index:65;display:none;background:linear-gradient(180deg,rgba(2,6,11,.62),rgba(3,7,13,.96))}
+#conversation{position:absolute;inset:0;z-index:65;display:none;background:linear-gradient(180deg,rgba(2,6,11,.58),rgba(3,7,13,.96))}
 #conversation.show{display:flex}
-.convPanel{position:absolute;left:3.2%;right:3.2%;bottom:7%;top:9%;display:grid;grid-template-rows:180px 1fr;gap:12px;padding:13px;border:2px solid #788ca8;border-radius:18px;background:rgba(7,14,25,.985);box-shadow:0 22px 75px rgba(0,0,0,.7)}
-#themeImage{width:100%;height:180px;object-fit:cover;object-position:center;border:2px solid #735b3a;border-radius:12px;filter:saturate(1.08) contrast(1.03)}
-.convPeople{display:grid;grid-template-columns:23% 54% 23%;gap:12px;align-items:end;min-height:0}
-.charCard{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;min-width:0}
-.charLabel{display:inline-block;padding:5px 10px;border:1px solid #526a87;border-radius:999px;background:#0b1526;color:#eddcbf;font:700 12px system-ui,sans-serif;margin-bottom:5px}
-.charArt{width:100%;height:220px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:12px;background:#121923;border:1px solid #3b4d64}
-.charArt img{height:100%;width:100%;object-fit:cover;object-position:center top}
-.dialogueBubble{position:relative;min-height:205px;align-self:end;padding:21px 22px;border:2px solid #9b8057;background:linear-gradient(180deg,#1d1c20,#14151b);border-radius:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
-.dialogueBubble:before{content:"";position:absolute;left:-15px;bottom:30px;border-width:11px 15px 11px 0;border-style:solid;border-color:transparent #9b8057 transparent transparent}
-.dialogueBubble:after{content:"";position:absolute;left:-11px;bottom:32px;border-width:9px 12px 9px 0;border-style:solid;border-color:transparent #1c1b1f transparent transparent}
-#convName{color:var(--gold);font:bold 19px Georgia,serif;margin-bottom:8px}
-#convText{font:18px/1.5 Georgia,serif;color:#eee6d7}
-#convBtn{position:absolute;right:20px;bottom:17px;background:#67491e;border-color:#ebc772;font-weight:700}
-
+.convPanel{position:absolute;left:3%;right:3%;top:7%;bottom:7%;padding:18px;border:2px solid #788ca8;border-radius:19px;background:rgba(7,14,25,.985);box-shadow:0 24px 80px rgba(0,0,0,.72);display:grid;grid-template-rows:1fr auto;gap:14px}
+.convPeople{display:grid;grid-template-columns:1fr 1fr;gap:18px;min-height:0}
+.speakerCard{display:grid;grid-template-rows:210px auto 1fr;gap:7px;min-height:0}
+.speakerPortrait{overflow:hidden;border-radius:14px;border:2px solid #526984;background:#111923}
+.speakerPortrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 25%;image-rendering:auto}
+.speakerName{text-align:center;color:#edd9b1;font:700 14px system-ui,sans-serif}
+.speechBubble{position:relative;min-height:155px;padding:18px 19px;border:2px solid #6b87a7;border-radius:15px;background:linear-gradient(180deg,#171e29,#101620);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)}
+.speechBubble.interlocutor{border-color:#aa8652;background:linear-gradient(180deg,#261f17,#171512)}
+.speechBubble:before{content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%);border-width:0 11px 12px;border-style:solid;border-color:transparent transparent #6b87a7 transparent}
+.speechBubble.interlocutor:before{border-color:transparent transparent #aa8652 transparent}
+.speechLabel{font:700 15px Georgia,serif;color:var(--gold);margin-bottom:7px}
+.speechText{font:18px/1.48 Georgia,serif;color:#f0e8da}
+#convBtn{justify-self:center;min-width:250px;padding:11px 18px;background:#68491e;border-color:#eac573;font-weight:700}
+#endScreen{position:absolute;inset:0;z-index:95;display:none;place-items:center;background:rgba(3,6,11,.91)}
+#endScreen.show{display:grid}
+.endCard{width:min(790px,92%);max-height:92vh;overflow:auto;padding:27px;text-align:center;background:rgba(8,16,29,.98);border:2px solid #7488a4;border-radius:18px;box-shadow:0 20px 70px rgba(0,0,0,.65)}
+.endCard h1{margin:0 0 10px;color:var(--gold);font:700 35px Georgia,serif}
+.endCard>p{max-width:670px;margin:0 auto 17px;color:#c7d2df;font:16px/1.55 system-ui,sans-serif}
+.summaryBox{max-width:680px;margin:0 auto 18px;padding:14px 16px;text-align:left;border:1px solid #3c526e;border-radius:12px;background:rgba(12,25,42,.82)}
+.summaryBox h3{margin:0 0 9px;color:#e8cb8b;font:700 17px Georgia,serif}
+.summaryBox p{margin:7px 0;color:#cad5e1;font:14px/1.48 system-ui,sans-serif}
+.endActions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
 #endScreen{position:absolute;inset:0;z-index:95;display:none;place-items:center;background:rgba(3,6,11,.90)}
 #endScreen.show{display:grid}
 .endCard{width:min(760px,92%);padding:28px;text-align:center;background:rgba(8,16,29,.98);border:2px solid #7488a4;border-radius:18px;box-shadow:0 20px 70px rgba(0,0,0,.65)}
@@ -86,16 +94,19 @@ radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
   #answers{grid-template-columns:1fr}
   #hangGrid{grid-template-columns:repeat(9,1fr)}
   #conversation{padding-bottom:2%}
-  .convPanel{left:2%;right:2%;top:7%;bottom:18%;grid-template-rows:105px 1fr;gap:8px;padding:9px}
-  #themeImage{height:105px}
-  .convPeople{grid-template-columns:25% 50% 25%;gap:6px}
-  .charArt{height:150px}
-  .charLabel{font-size:10px;padding:4px 6px}
-  .dialogueBubble{min-height:150px;padding:13px 14px;align-self:center}
-  .dialogueBubble:before,.dialogueBubble:after{display:none}
-  #convText{font-size:15px;line-height:1.4}
-  #convName{font-size:16px}
-  #convBtn{right:9px;bottom:8px;font-size:12px;padding:8px 10px}
+  .convPanel{left:2%;right:2%;top:5%;bottom:17%;padding:9px;gap:8px}
+  .convPeople{grid-template-columns:1fr;gap:10px;overflow:auto;padding-right:2px}
+  .speakerCard{grid-template-columns:92px 1fr;grid-template-rows:auto auto;gap:5px 9px;align-items:center}
+  .speakerPortrait{grid-row:1/3;height:108px}
+  .speakerName{grid-column:1;grid-row:2;font-size:9px;background:rgba(4,9,17,.85);margin-top:-25px;z-index:2;padding:3px}
+  .speechBubble{grid-column:2;grid-row:1/3;min-height:108px;padding:11px 12px}
+  .speechBubble:before{left:-12px;top:50%;transform:translateY(-50%);border-width:11px 12px 11px 0;border-color:transparent #6b87a7 transparent transparent}
+  .speechBubble.interlocutor:before{border-color:transparent #aa8652 transparent transparent}
+  .speechLabel{font-size:13px;margin-bottom:4px}
+  .speechText{font-size:14px;line-height:1.38}
+  #convBtn{min-width:190px;font-size:12px;padding:9px 12px}
+  .summaryBox{padding:11px 12px}
+  .summaryBox p{font-size:13px;line-height:1.42}
   .pill{font-size:11px;padding:6px 8px}.pill:nth-child(3){display:none}
   #topbar button{font-size:11px;padding:6px 8px}
 }
@@ -119,22 +130,25 @@ radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
 
 <div id="conversation">
   <div class="convPanel">
-    <img id="themeImage" src="" alt="Ilustração do desafio">
     <div class="convPeople">
-      <div class="charCard">
-        <div class="charLabel">O INTERLOCUTOR</div>
-        <div class="charArt"><img id="interlocutorImage" src="interlocutor_dialogue.png" alt="Interlocutor"></div>
+      <div class="speakerCard">
+        <div class="speakerPortrait"><img id="interlocutorImage" src="interlocutor_idolo.png" alt="Interlocutor"></div>
+        <div class="speakerName" id="interlocutorName">O ÍDOLO</div>
+        <div class="speechBubble interlocutor">
+          <div class="speechLabel" id="interlocutorLabel">O Ídolo</div>
+          <div class="speechText" id="interlocutorText"></div>
+        </div>
       </div>
-      <div class="dialogueBubble">
-        <div id="convName">O Interlocutor</div>
-        <div id="convText"></div>
-      </div>
-      <div class="charCard">
-        <div class="charLabel">NIETZSCHE</div>
-        <div class="charArt"><img id="nietzscheImage" src="nietzsche_dialogue.png" alt="Nietzsche"></div>
+      <div class="speakerCard">
+        <div class="speakerPortrait"><img id="nietzscheImage" src="nietzsche_dialogue.png" alt="Nietzsche"></div>
+        <div class="speakerName">NIETZSCHE</div>
+        <div class="speechBubble">
+          <div class="speechLabel">Nietzsche</div>
+          <div class="speechText" id="nietzscheText"></div>
+        </div>
       </div>
     </div>
-    <button id="convBtn">Responder de Nietzsche ▶</button>
+    <button id="convBtn">Ouvir Nietzsche ▶</button>
   </div>
 </div>
 
@@ -163,9 +177,9 @@ radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
     <div class="sub">O Caminho do Pensamento — percorra pequenos trechos de uma Europa do século XIX e atravesse quatro portões, cada um guardado por uma conversa filosófica.</div>
     <div class="features">
       <div class="feature">🏛️ Ruas históricas: pedra, ferro, carruagens e gás</div>
-      <div class="feature">🎭 Interlocutor + Nietzsche em cada desafio</div>
+      <div class="feature">🎭 Um interlocutor próprio em cada desafio</div>
       <div class="feature">🎵 Trilha sonora contínua em loop</div>
-      <div class="feature">📱 Controle completo por toque</div>
+      <div class="feature">📱 Avanço automático até cada portão</div>
     </div>
     <button id="startBtn">▶ Começar aventura</button>
     <div id="credits">Sem bibliotecas externas · GitHub Pages · jogo em um único HTML + 2 recursos.</div>
@@ -176,6 +190,13 @@ radial-gradient(circle at 80% 48%,rgba(173,112,50,.14),transparent 40%)}
   <div class="endCard">
     <h1 id="endTitle"></h1>
     <p id="endText"></p>
+    <div class="summaryBox">
+      <h3>Resumo da jornada</h3>
+      <p><b>Filosofar com o martelo:</b> examinar criticamente valores e ídolos apresentados como absolutos.</p>
+      <p><b>Morte de Deus:</b> a crise dos fundamentos absolutos que organizavam sentido e valor na cultura ocidental.</p>
+      <p><b>Cientificismo:</b> a crítica não é à ciência, mas à sua transformação em explicação absoluta da existência.</p>
+      <p><b>Perspectivismo:</b> conhecer envolve perspectivas e interpretação, sem que isso signifique que toda interpretação seja equivalente.</p>
+    </div>
     <div class="endActions"><button id="restartBtn">↻ Voltar ao início</button><button id="endMusicBtn">♫ Música</button></div>
   </div>
 </div>
@@ -189,29 +210,29 @@ const UI={title:$("titlePanel"),conversation:$("conversation"),dialog:$("dialog"
 answers:$("answers"),hang:$("hangman"),hint:$("hint"),word:$("word"),hangGrid:$("hangGrid"),hangErrors:$("hangErrors"),
 feedback:$("feedback"),stage:$("stagePill"),life:$("lifePill"),musicPill:$("musicPill"),musicBtn:$("musicBtn"),
 toast:$("toast"),end:$("endScreen"),endTitle:$("endTitle"),endText:$("endText"),audio:$("music"),
-convName:$("convName"),convText:$("convText"),themeImage:$("themeImage"),interlocutorImage:$("interlocutorImage"),nietzscheImage:$("nietzscheImage"),convBtn:$("convBtn")};
+interlocutorImage:$("interlocutorImage"),interlocutorName:$("interlocutorName"),interlocutorLabel:$("interlocutorLabel"),interlocutorText:$("interlocutorText"),nietzscheImage:$("nietzscheImage"),nietzscheText:$("nietzscheText"),convBtn:$("convBtn")};
 
 const stages=[
- {name:"O SALÃO DOS ÍDOLOS",scene:0,gateX:770,image:"idol_scene.png",
+ {name:"O SALÃO DOS ÍDOLOS",scene:0,gateX:770,speaker:"interlocutor_idolo.png",speakerName:"O ÍDOLO",
   q:"O que Nietzsche quer sugerir ao falar em “filosofar com o martelo”?",
   answers:["Destruir fisicamente qualquer obra filosófica.","Examinar e questionar criticamente valores e ídolos tidos como absolutos.","Substituir a filosofia pela ciência experimental.","Rejeitar todo e qualquer conhecimento."],
   correct:1,
   ask:"Friedrich, quando você fala em “filosofar com o martelo”, o que exatamente pretende testar?",
   reply:"Não quero apenas destruir. Quero bater nos ídolos, ouvir onde são ocos e descobrir quais valores suportam o exame crítico.",
   note:"O martelo funciona como instrumento de diagnóstico: testar os valores e ouvir se estão “ocos”."},
- {name:"A CAPELA ABANDONADA",scene:1,gateX:790,image:"death_god_scene.png",
+ {name:"A CAPELA ABANDONADA",scene:1,gateX:790,speaker:"interlocutor_sacerdote.png",speakerName:"O SACERDOTE",
   q:"O que está em jogo na expressão “Deus está morto”?",
   answers:["Uma tese sobre a existência biológica de um deus.","Uma afirmação de que a religião deixaria de existir imediatamente.","A crise dos fundamentos absolutos que davam sentido e valor à cultura ocidental.","A ideia de que somente a ciência poderia criar valores."],
   correct:2,
   ask:"E quando você diz que “Deus está morto”, está falando simplesmente de religião?",
   reply:"Não. A frase aponta para o desmoronamento de um fundamento que organizava o sentido e os valores do mundo ocidental.",
   note:"A frase aponta para uma crise cultural: antigas garantias de sentido perdem sua força."},
- {name:"A BIBLIOTECA",scene:2,gateX:800,image:"science_scene.png",hang:true,word:"CIENTIFICISMO",
+ {name:"A BIBLIOTECA",scene:2,gateX:800,speaker:"interlocutor_cientista.png",speakerName:"O CIENTISTA",hang:true,word:"CIENTIFICISMO",
   clue:"Crença de que a ciência é a explicação definitiva de tudo.",
   ask:"Nietzsche, qual é o problema de transformar a ciência em uma explicação total?",
   reply:"A ciência conhece e descreve muitas coisas. O problema começa quando ela é convertida em um novo absoluto e pretende decidir, sozinha, o valor da existência.",
   note:"A crítica não é à ciência em si, mas à sua transformação em um novo absoluto."},
- {name:"A TORRE DOS ESPELHOS",scene:3,gateX:775,image:"perspective_scene.png",
+ {name:"A TORRE DOS ESPELHOS",scene:3,gateX:775,speaker:"interlocutor_filosofo.png",speakerName:"O FILÓSOFO",
   q:"O que significa perspectivismo em Nietzsche?",
   answers:["Existe uma única perspectiva correta, válida para qualquer situação.","Toda perspectiva é igualmente verdadeira em qualquer contexto.","O conhecimento é situado em perspectivas; interpretar não é acessar um ponto de vista absolutamente neutro.","O conhecimento é impossível e qualquer afirmação vale tanto quanto outra."],
   correct:2,
@@ -220,7 +241,7 @@ const stages=[
   note:"Perspectivismo não significa “vale tudo”: significa reconhecer posição, interesses, linguagem e condições de interpretação."}
 ];
 
-let state="title",stage=0,lives=3,px=150,cam=0,vx=0,frame=0,last=performance.now(),moving=false,interact=false;
+let state="title",stage=0,lives=3,px=150,cam=0,vx=0,frame=0,last=performance.now(),moving=false,interact=false,autoRun=false,celebrationStart=0;
 let active=null,hang=null,convStep=0,musicOn=false,toastTimer,carriageOffset=0,pedOffset=0;
 
 function toast(t,ms=1900){UI.toast.textContent=t;UI.toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>UI.toast.classList.remove("show"),ms)}
@@ -233,27 +254,28 @@ async function setMusic(on){
 UI.musicBtn.onclick=()=>setMusic(!musicOn);$("endMusicBtn").onclick=()=>setMusic(!musicOn);
 $("fsBtn").onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
 
-function reset(){state="play";stage=0;lives=3;px=150;cam=0;vx=0;frame=0;interact=false;UI.title.style.display="none";UI.end.classList.remove("show");UI.conversation.classList.remove("show");hideDialog();hud()}
-$("startBtn").onclick=async()=>{reset();await setMusic(true);toast("Caminho curto até o portão. Use AÇÃO quando chegar.",2800)}
+function reset(){state="play";stage=0;lives=3;px=150;cam=0;vx=0;frame=0;interact=false;autoRun=true;celebrationStart=0;UI.title.style.display="none";UI.end.classList.remove("show");UI.conversation.classList.remove("show");hideDialog();hud()}
+$("startBtn").onclick=async()=>{reset();await setMusic(true);toast("Nietzsche avançará sozinho e parará no próximo portão.",2800)}
 $("restartBtn").onclick=()=>reset();
 
 function hideDialog(){UI.dialog.classList.remove("show")}
 function startConversation(){
-  active=stages[stage];state="conversation";convStep=0;
-  UI.themeImage.src=active.image;
-  UI.interlocutorImage.src="interlocutor_dialogue.png";
+  active=stages[stage];state="conversation";convStep=0;autoRun=false;
+  UI.interlocutorImage.src=active.speaker;
+  UI.interlocutorName.textContent=active.speakerName;
+  UI.interlocutorLabel.textContent=active.speakerName;
+  UI.interlocutorText.textContent=active.ask;
   UI.nietzscheImage.src="nietzsche_dialogue.png";
-  UI.convName.textContent="O Interlocutor";
-  UI.convText.textContent=active.ask;
-  UI.convBtn.textContent="Responder de Nietzsche ▶";
+  UI.nietzscheText.textContent="";
+  UI.convBtn.textContent="Ouvir Nietzsche ▶";
   UI.conversation.classList.add("show");
 }
 UI.convBtn.onclick=()=>{
   if(state!=="conversation")return;
   if(convStep===0){
-    convStep=1;UI.convName.textContent="Nietzsche";UI.convText.textContent=active.reply;
-    UI.convHint.textContent="A fala prepara o tema, mas não entrega a resposta.";
-    UI.convBtn.textContent="Ver desafio ▶";
+    convStep=1;
+    UI.nietzscheText.textContent=active.reply;
+    UI.convBtn.textContent="Ir para o desafio ▶";
   }else{
     UI.conversation.classList.remove("show");state="question";showQuestion();
   }
@@ -288,19 +310,44 @@ function guess(ch){
 function lose(reason){
   lives--;hud();hideDialog();
   if(lives<=0){state="gameover";UI.endTitle.textContent="AS PORTAS SE FECHARAM";UI.endText.textContent="Você ficou sem vidas. O caminho recomeça do início.";UI.end.classList.add("show")}
-  else{state="play";px=150;cam=0;toast(`${reason} Restam ${lives} ${lives===1?"vida":"vidas"}.`,2400)}
+  else{state="play";px=150;cam=0;vx=0;autoRun=true;toast(`${reason} Restam ${lives} ${lives===1?"vida":"vidas"}.`,2400)}
 }
 function complete(){
-  hideDialog();toast(active.note,3200);
-  if(stage===3){state="win";setTimeout(()=>{UI.endTitle.textContent="VOCÊ CHEGOU AO FIM";UI.endText.textContent="Os quatro portões foram atravessados. Agora a jornada retorna ao início: pensar continua sendo caminhar.";UI.end.classList.add("show")},700)}
-  else{stage++;state="play";px=150;cam=0;hud()}
+  hideDialog();
+  if(stage===3){
+    state="celebrate";autoRun=false;celebrationStart=performance.now();
+    setTimeout(showFinalSummary,4700);
+  }else{
+    toast(active.note,3000);
+    stage++;state="play";px=150;cam=0;vx=0;autoRun=true;hud();
+  }
+}
+function showFinalSummary(){
+  state="win";
+  UI.endTitle.textContent="VOCÊ CONSEGUIU!";
+  UI.endText.textContent="Os quatro portões foram atravessados. Antes de voltar ao início, eis o caminho filosófico percorrido.";
+  UI.end.classList.add("show");
 }
 
 const key={left:false,right:false};
-function bindHold(id,prop){const el=$(id);const down=e=>{e.preventDefault();key[prop]=true;el.setPointerCapture?.(e.pointerId)},up=e=>{e.preventDefault();key[prop]=false};el.addEventListener("pointerdown",down);el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);el.addEventListener("pointerleave",up)}
-bindHold("leftBtn","left");bindHold("rightBtn","right");$("actionBtn").addEventListener("pointerdown",e=>{e.preventDefault();interact=true});
-addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")key.left=true;if(k==="arrowright"||k==="d")key.right=true;if(k==="enter"||k===" ")interact=true;if(k==="m")setMusic(!musicOn)});
-addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")key.left=false;if(k==="arrowright"||k==="d")key.right=false});
+function toggleAutoRun(){
+  if(state!=="play")return;
+  autoRun=!autoRun;
+  toast(autoRun?"Avanço automático ligado.":"Avanço automático pausado.",1200);
+}
+$("leftBtn").addEventListener("pointerdown",e=>{e.preventDefault();key.left=true;autoRun=false});
+$("leftBtn").addEventListener("pointerup",e=>{e.preventDefault();key.left=false});
+$("leftBtn").addEventListener("pointercancel",()=>key.left=false);
+$("rightBtn").addEventListener("pointerdown",e=>{e.preventDefault();toggleAutoRun()});
+$("actionBtn").addEventListener("pointerdown",e=>{e.preventDefault();interact=true});
+addEventListener("keydown",e=>{
+  const k=e.key.toLowerCase();
+  if(k==="arrowleft"||k==="a"){key.left=true;autoRun=false}
+  if(k==="arrowright"||k==="d")autoRun=true;
+  if(k==="enter"||k===" ")interact=true;
+  if(k==="m")setMusic(!musicOn)
+});
+addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")key.left=false});
 
 function r(x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
 function circ(x,y,rad,col){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill()}
@@ -501,27 +548,70 @@ function drawWorld(){
 }
 
 function update(dt){
-  frame+=dt*60;if(state!=="play")return;
-  const dir=(key.right?1:0)-(key.left?1:0);moving=!!dir;
-  vx+=dir*.95;vx*=.73;if(Math.abs(vx)>6)vx=6*Math.sign(vx);px+=vx;
-  px=Math.max(145,Math.min(stages[stage].gateX+125,px));
+  frame+=dt*60;
+  if(state!=="play")return;
+
   const gx=stages[stage].gateX;
+  const dir=key.left?-1:(autoRun?1:0);
+  moving=!!dir;
+  vx+=dir*.95;vx*=.73;
+  if(Math.abs(vx)>6)vx=6*Math.sign(vx);
+  px+=vx;
+
+  if(autoRun && px>=gx-78){
+    px=gx-78;vx=0;moving=false;autoRun=false;
+    toast("Chegamos ao portão. Toque em AÇÃO.",1800);
+  }
+  px=Math.max(145,Math.min(gx+90,px));
   if(Math.abs(px-gx)<105 && interact){interact=false;startConversation()}
-  // short walk; almost always keep the gate on the same screen.
-  cam+=(px-260-cam)*.13;cam=Math.max(0,Math.min(410,cam));interact=false;
+
+  cam+=(px-260-cam)*.13;
+  cam=Math.max(0,Math.min(410,cam));
+  interact=false;
 }
 
 function drawConversation(){
   drawWorld();
-  ctx.fillStyle="rgba(3,7,13,.60)";ctx.fillRect(0,0,W,H);
-  const g=ctx.createRadialGradient(W/2,330,60,W/2,350,690);
-  g.addColorStop(0,"rgba(217,169,88,.05)");g.addColorStop(1,"rgba(0,0,0,.34)");
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="rgba(3,7,13,.68)";ctx.fillRect(0,0,W,H);
+}
+function drawCelebration(){
+  drawWorld();
+  ctx.fillStyle="rgba(3,7,13,.36)";ctx.fillRect(0,0,W,H);
+  const t=(performance.now()-celebrationStart)/1000;
+  ctx.save();ctx.translate(W/2,315);
+  for(let i=0;i<46;i++){
+    const a=i*1.63+t*(.35+(i%4)*.04),rad=75+(i*43)%250;
+    const x=Math.cos(a)*rad,y=Math.sin(a*1.17)*rad*.62;
+    const sz=3+(i%5);
+    ctx.fillStyle=[ "#f0c86e","#e9e3d5","#d98b70","#a7d2ad","#9fc7e9"][i%5];
+    ctx.fillRect(Math.round(x),Math.round(y),sz,sz);
+  }
+  for(let i=0;i<18;i++){
+    const a=i*Math.PI*2/18+t*.25,len=75+25*Math.sin(t*4+i);
+    ctx.strokeStyle=i%2?"#d8b05d":"#dbe5ef";ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(Math.cos(a)*45,Math.sin(a)*45);ctx.lineTo(Math.cos(a)*(115+len),Math.sin(a)*(115+len));ctx.stroke();
+  }
+  ctx.restore();
+  ctx.textAlign="center";ctx.fillStyle="#f1d39b";ctx.font="700 46px Georgia,serif";ctx.fillText("VOCÊ CONSEGUIU!",W/2,145);
+  ctx.fillStyle="#e7edf4";ctx.font="19px system-ui,sans-serif";ctx.fillText("Os quatro desafios foram concluídos.",W/2,181);
+
+  // celebratory Nietzsche
+  ctx.save();ctx.translate(W/2,590);ctx.scale(3.1,3.1);
+  const jump=Math.abs(Math.sin(t*5))*13;ctx.translate(0,-jump);
+  r(-17,-61,34,57,"#182537");r(-11,-10,9,30,"#1c2430");r(2,-10,9,30,"#1c2430");
+  r(-23,-64,7,31,"#27384f");r(16,-64,7,31,"#27384f");
+  r(-28,-85,8,8,"#e5b180");r(20,-85,8,8,"#e5b180");
+  line(-19,-59,-25,-82,"#27384f",6);line(19,-59,25,-82,"#27384f",6);
+  r(-16,-91,32,28,"#ebb583");r(-18,-103,36,19,"#201713");r(-14,-110,30,9,"#2b1c15");
+  r(-11,-87,8,4,"#4d2d24");r(4,-87,8,4,"#4d2d24");r(-2,-84,5,10,"#c98562");
+  r(-13,-77,11,6,"#2b1b18");r(2,-77,11,6,"#2b1b18");r(-8,-73,18,6,"#1e1412");
+  ctx.restore();
 }
 
 function loop(now){
   const dt=Math.min(.04,(now-last)/1000);last=now;
   if(state==="conversation"){drawConversation()}
+  else if(state==="celebrate"){drawCelebration()}
   else {drawWorld()}
   update(dt);
   requestAnimationFrame(loop)
